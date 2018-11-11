@@ -7,7 +7,7 @@
 
 ### From CDN
 ```html
-<script src="https://unpkg.com/"></script>
+<script src="https://unpkg.com/smoothscroll-anchor-polyfill"></script>
 ```
 ### Or with npm
 ```bash

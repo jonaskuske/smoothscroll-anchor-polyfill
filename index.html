@@ -26,8 +26,8 @@
           var scrollPos = d.documentElement.scrollTop || bd.scrollTop;
           var distance = scrollPos - prevScrollPos;
 
-          // Only react if user scrolled more than 50px
-          if (Math.abs(distance) < 50) return;
+          // Only react if user scrolled more than 25px
+          if (Math.abs(distance) < 25) return;
 
           // Show or hide header depending on scroll direction
           if (distance > 0) bdClass.add('hide-header');

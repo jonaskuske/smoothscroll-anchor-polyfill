@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>smoothscroll-anchor-polyfill</title>
+    <!-- Use some polyfill for the smoothscroll JavaScript API -->
+    <script src="https://unpkg.com/smoothscroll-polyfill"></script>
+    <!-- Use this polyfill to apply the JS smoothscroll to anchor links -->
+    <script src="./index.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Mono|Roboto:300,400,700"
+      rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/milligram@1.3.0/dist/milligram.css">
+    <link rel="stylesheet" href="./index.css">
+
+    <!-- Hide header after scroll (mobile only) -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        var d = document, bd = d.body, bdClass = bd.classList;
+        var prevScrollPos = d.documentElement.scrollTop || bd.scrollTop;
+
+        d.addEventListener('scroll', function () {
+          var scrollPos = d.documentElement.scrollTop || bd.scrollTop;
+          var distance = scrollPos - prevScrollPos;
+
+          // Only react if user scrolled more than 50px
+          if (Math.abs(distance) < 50) return;
+
+          // Show or hide header depending on scroll direction
+          if (distance > 0) bdClass.add('hide-header');
+          else bdClass.remove('hide-header');
+
+          prevScrollPos = scrollPos;
+        }, false);
+      })
+    </script>
+  </head>
+
+  <body>
+    <header>
+      <nav class="container">
+        <ul>
+          <li><a class="button" href="#start">Start</a></li>
+          <li><a class="button" href="#usage">Usage</a></li>
+          <li><a class="button" href="#docs">Docs</a></li>
+          <li><a class="button" href="#legal">Legal</a></li>
+          <li></li>
+          <li><a href="#">⬆ to Top</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main class="container">
+      <div class="fullscreen">
+        <div>
+          <h1 data-to="">smoothscroll-anchor-polyfill</h1>
+          <p class="max-width">⚓ Apply smooth scroll to anchor links to
+            replicate CSS <code>scroll-behavior</code></p>
+          <a class="button button-outline" href="https://github.com/jonaskuske/smoothscroll-anchor-polyfill">GitHub</a>
+        </div>
+      </div>
+
+      <section id="start">
+        <h2 data-to="start">Start</h2>
+        <p>The <b>Scroll Behavior</b> specification allows for native smooth
+          scrolling
+          in browsers
+          – both by using JavaScript scroll APIs like <code>window.scrollTo</code>
+          and
+          <code>element.scrollIntoView</code> or by simply setting the
+          property
+          <code>scroll-behavior</code> to <code>smooth</code> in CSS, which
+          will then make any scrolling <b>smooth by default</b>. This includes
+          scrolls
+          that are triggered by an anchor link pointing to an element on the
+          page by targeting it's <code>id</code> in the hash, like <code>&lt;a href="#target"></code>.<br>
+          By using this CSS property, you can build a one-page design with
+          smooth scroll between the different sections without having to write
+          a single line of JS – just like this page is doing!
+        </p>
+        <p>Unfortunately, the Scroll Behavior spec is not supported in all
+          major browsers yet. 👎🏻<br>
+          There are several Polyfills available to fix this, for example <a
+            href="http://iamdustan.com/smoothscroll/"><code>smoothscroll-polyfill</code></a>.
+          But even if you use those, navigation happening due to clicks on
+          anchor elements is still instant without any smoothness: only the
+          JavaScript APIs are polyfilled.<br>
+          <b>This little script aims to fix this.</b>
+        </p>
+      </section>
+
+      <section id="usage">
+        <h2 data-to="usage">Usage</h2>
+        <h3 id="requirements">Requirements</h3>
+        <p>Since this script uses the JavaScript scroll APIs and relies on
+          their smooth scroll functionality to actually work, you'll need a
+          polyfill for the Scroll Behavior spec in order for this one to work.
+          <a href="http://iamdustan.com/smoothscroll/"><code>smoothscroll-polyfill</code></a>
+          is used as example throughout this site, but you may just as well use
+          another polyfill - or write your own implementation.</p>
+        <p>⚠ Furthermore, this script <b>assumes that <code style="padding:0;margin:0;font-size:inherit;">scroll-behavior</code>
+            is set globally</b> in your CSS. If you don't do that,
+          scroll behavior <em>will differ between browsers with and without
+            native support</em> for Scroll Behavior. Set it as follows:</p>
+        <pre><code>&lt;style>
+html {
+  scroll-behavior: smooth;
+}
+&lt;/style>
+</code></pre>
+
+        <h3 id="basic-usage">Basic usage</h3>
+        <p>Simply drop in <code>&lt;script></code> tags linking to the
+          polyfills and and you're good to go.</p>
+        <label for="html-usage">In the HTML document's &lt;head>:</label>
+        <pre><code id="html-usage">&lt;!-- A polyfill to enable smoothscroll for the JavaScript APIs -->
+&lt;script src="https://unpkg.com/smoothscroll-polyfill">&lt;/script>
+
+&lt;!-- This package, to apply the smoothscroll to anchor links -->
+&lt;script src="https://unpkg.com/smoothscroll-anchor-polyfill">&lt;/script>
+</code></pre>
+        <h3 id="npm">With npm</h3>
+        <p>Alternatively, if you're using npm, you can install using
+          <code>npm install smoothscroll-anchor-polyfill</code> and then use
+          the polyfill by
+          requiring/importing it in your JS.</p>
+        <label for="js-usage">In your JavaScript:</label>
+        <pre><code>// Import any polyfill to enable smoothscroll for JS APIs
+import smoothscrollPolyfill from 'smoothscroll-polyfill';
+// Import this package to apply the smoothscroll to anchor links
+import 'smoothscroll-anchor-polyfill';
+
+// Enable the main smoothscroll polyfill (might not be neccessary if you use an alternative one)
+smoothscrollPolyfill.polyfill();
+</code></pre>
+        <h3 id="code-splitting">Advanced (with Code Splitting)</h3>
+        <p>If you're using a build system with support for code splitting like
+          <a href="https://parceljs.org/">Parcel</a> or <a href="https://webpack.js.org/">Webpack</a>,
+          you can use dynamic imports to load the polyfills – this way,
+          browsers won't even download the polyfill code if they already have
+          support for the Scroll Behavior spec natively:</p>
+        <label for="js-usage">In your JavaScript code:</label>
+        <pre><code id="js-usage-advanced">// Only continue if polyfills are actually needed
+if (!('scrollBehavior') in document.documentElement.style) {
+
+  // Wait until the Polyfills are loaded
+  Promise.all([
+    import('smoothscroll-polyfill'),
+    import('smoothscroll-anchor-polyfill')
+  ])
+  // then use the modules however you want
+  .then(([smoothscrollPolyfill, smoothscrollAnchorPolyfill]) => {
+    // e.g. enable the main smoothscroll polyfill (might not be neccessary if you use an alternative one)
+    smoothscroll.polyfill();
+  });
+}
+</code></pre>
+      </section>
+
+      <section id="docs">
+        <h2 data-to="docs">Docs</h2>
+        <p>There's not much more to it than loading this polyfill – it will
+          execute immediately no matter if loaded through a script tag or in a
+          CommonJS environment. If the Scroll Behavior spec is supported
+          natively, the code won't do anything.</p>
+        <p>⚠ Remember to also set the <code>scroll-behavior</code> property
+          globally (on <code>html</code>)
+          in your CSS, otherwise your site will behave differently in browsers
+          with and without support for the Scroll Behavior spec! ⚠</p>
+        <h3 id="force-polyfill">Use the Polyfill even if there is native
+          support</h3>
+        <div class="row row-wrap">
+          <div class="column column-33" style="flex-grow:1;max-width:100%;overflow:auto;">
+            <code>window.__forceSmoothScrollAnchorPolyfill__</code>:
+          </div>
+          <div class="column column-67" style="flex-grow:1;max-width:100%;">
+            <p>If this is set to <code>true</code>, anchor navigation
+              will be handled by this script even if the browser supports
+              native smooth scroll. <b>Not recommended.</b></p>
+          </div>
+        </div>
+        <h3 id="event-delegation">Polyfill anchors dynamically inserted later</h3>
+        <p>The polyfill uses <a href="https://javascript.info/event-delegation">Event
+            Delegation</a> to detect clicks,
+          so even if an anchor is added to the page after the polyfill was
+          loaded, everything should work.</p>
+        <h3 id="disable">Disable the polyfill</h3>
+        <p>There currently is no way to disable the polyfill once it was
+          loaded. I considered adding this functionality but couldn't think of
+          a good use case – if you have one, let me know!</p>
+        <p>💡 Note that even if global <code>scroll-behavior</code> is set and
+          this polyfill is loaded, you can still perform instant, jumping
+          navigation by using one of the JavaScript scroll APIs and specifying
+          <code>{ behavior: 'instant' }</code> in the options object.</p>
+        <h3 id="ssr">Will this break Server Side Rendering?</h3>
+        <p>No.</p>
+      </section>
+      <!--  -->
+      <!--  -->
+      <!--  -->
+      <!--  -->
+      <!--  -->
+      <!--  -->
+      <!--  -->
+      <!--  -->
+      <!--  -->
+      <!--  -->
+      <!--  -->
+      <!--  -->
+      <!--  -->
+      <!--  -->
+      <!-- Way too big legal section  -->
+      <!--  -->
+      <!--  -->
+      <!--  -->
+      <!--  -->
+      <!--  -->
+      <section id="legal">
+        <label class="label-inline" for="language">Show in German? (<b>Deutsch</b>)</label>
+        <input type="checkbox" name="language" id="language">
+        <div class="german">
+          <h2 data-to="legal">Rechtliches</h2>
+          <p><strong>Hinweis: die folgenden rechtlichen Hinweise betreffen
+              diese Website als solche entsprechend deutschem und europäischem
+              Recht, nicht das vorgestellte Software-Paket <em>"smoothscroll-anchor-polyfill"</em>.
+              <em>"smoothscroll-anchor-polyfill"</em>
+              selbst ist lizensiert nach der MIT-Lizenz, mehr Informationen
+              können dem <a href="https://github.com/jonaskuske/smoothscroll-anchor-polyfill">GitHub
+                Repository</a> entnommen werden.</strong></p>
+          <h3>Impressum</h3>
+          <p><b>Angaben gemäß §5 TMG</b></p>
+          <address>
+            Jonas Kuske<br>
+            Sielstraße 5<br>
+            27568 Bremerhaven
+          </address>
+
+          <p><b>Kontakt</b></p>
+          <p>
+            Telefon: +491603336948<br>
+            Mail: mail@jonaskuske.com<br>
+          </p>
+
+          <p><b>Verantwortlich für Inhalte gemäß 55 Abs. 2 RStV:</b></p>
+          <p>Jonas Kuske<br>Sielstraße 5<br>27568 Bremerhaven</p>
+
+          <h4>Haftungsauschluss</h4>
+          <p><b>Haftung für Inhalte</b></p>
+          <p>Die Inhalte dieser Seite wurden mit größter Sorgfalt erstellt.
+            Für die
+            Richtigkeit, Vollständigkeit und Aktualität der Inhalte kann ich
+            jedoch keine
+            Gewähr übernehmen. Als Diensteanbieter bin ich gemäß § 7 Abs.1
+            TMG für eigene
+            Inhalte auf diesen Seiten nach den allgemeinen Gesetzen
+            verantwortlich. Nach §§
+            8 bis 10 TMG bin ich als Diensteanbieter jedoch nicht
+            verpflichtet,
+            übermittelte oder gespeicherte fremde Informationen zu überwachen
+            oder nach
+            Umständen zu forschen, die auf eine rechtswidrige Tätigkeit
+            hinweisen.
+            Verpflichtungen zur Entfernung oder Sperrung der Nutzung von
+            Informationen nach
+            den allgemeinen Gesetzen bleiben hiervon unberührt. Eine
+            diesbezügliche Haftung
+            ist jedoch erst ab dem Zeitpunkt der Kenntnis einer konkreten
+            Rechtsverletzung
+            möglich. Bei Bekanntwerden von entsprechenden Rechtsverletzungen
+            werde ich
+            diese Inhalte umgehend entfernen.</p>
+
+          <p><b>Haftung für Links</b></p>
+          <p>Mein Angebot enthält Links zu externen Webseiten Dritter, auf
+            deren Inhalte ich
+            keinen Einfluss habe. Deshalb kann ich für diese fremden Inhalte
+            auch keine
+            Gewähr übernehmen. Für die Inhalte der verlinkten Seiten ist
+            stets der
+            jeweilige Anbieter oder Betreiber der Seiten verantwortlich. Die
+            verlinkten
+            Seiten wurden zum Zeitpunkt der Verlinkung auf mögliche
+            Rechtsverstöße
+            überprüft. Rechtswidrige Inhalte waren zum Zeitpunkt der
+            Verlinkung nicht
+            erkennbar. Eine permanente inhaltliche Kontrolle der verlinkten
+            Seiten ist
+            jedoch ohne konkrete Anhaltspunkte einer Rechtsverletzung nicht
+            zumutbar. Bei
+            Bekanntwerden von Rechtsverletzungen werde ich derartige Links
+            umgehend
+            entfernen.</p>
+
+          <h4>Urheberrecht</h4>
+          <p>Die durch die Seitenbetreiber erstellten bzw. verwendeten
+            Inhalte
+            und Werke auf
+            diesen Seiten unterliegen dem deutschen Urheberrecht.</p>
+          <p>Soweit die Inhalte auf dieser
+            Seite nicht vom
+            Betreiber erstellt wurden, werden die Urheberrechte Dritter
+            beachtet.
+            Insbesondere werden Inhalte Dritter als solche gekennzeichnet.
+            Sollten Sie
+            trotzdem auf eine Urheberrechtsverletzung aufmerksam werden,
+            bitte
+            ich um einen
+            entsprechenden Hinweis. Bei Bekanntwerden von Rechtsverletzungen
+            werde ich
+            derartige Inhalte umgehend entfernen.
+          </p>
+          <h3>Datenschutz</h3>
+          <p>Durch die Nutzung dieser Website erklären Sie sich mit
+            der Erhebung, Verarbeitung und Nutzung von Daten gemäß der
+            nachfolgenden
+            Beschreibung einverstanden. Die Website kann grundsätzlich ohne
+            Registrierung
+            besucht werden. Dabei werden folgende Daten ggf. zu statistischen
+            Zwecken auf
+            dem Server, verwaltet von <a href="https://github.com" target="_blank"
+              rel="noopener">GitHub</a>,
+            in sogenannten "Server Log-Files" gespeichert, ohne dass diese
+            Daten
+            unmittelbar auf Ihre Person bezogen werden:</p>
+          <ul>
+            <li>
+              Besuchte Website
+            </li>
+            <li>
+              Uhrzeit zum Zeitpunkt des Zugriffes
+            </li>
+            <li>
+              Menge der gesendeten Daten in Bytes
+            </li>
+            <li>
+              Quelle/Verweis, von welchem Sie auf diese Seite gelangten
+            </li>
+            <li>
+              Verwendeter Browser
+            </li>
+            <li>
+              Verwendetes Betriebssystem
+            </li>
+            <li>
+              Verwendete IP-Adresse
+            </li>
+          </ul>
+          <p>Diese Seite verwendet den Dienst <a href="https://fonts.google.com"
+              target="_blank" rel="noopener">Google Fonts</a>, um verschiedene
+            Schriftarten einzubinden. Beim Abrufen der Schriftdateien, was bei
+            Seitenaufruf automatisch geschieht, können die Daten, die oben
+            aufgelistet
+            sind, auch vom Dienstleister Google eingesehen werden.</p>
+          <p>Nehmen Sie mit dem Websitebetreiber durch die
+            angebotenen Kontaktmöglichkeiten Verbindung auf, werden Ihre
+            Angaben
+            gespeichert, damit auf diese zur Bearbeitung und Beantwortung Ihrer
+            Anfrage
+            zurückgegriffen werden kann. Ohne Ihre Einwilligung werden diese
+            Daten nicht
+            an Dritte weitergegeben; auf Wunsch können Sie Einsicht in die
+            gesammelten
+            Daten bekommen oder eine vollständige Löschung selbiger
+            veranlassen.</p>
+        </div>
+        <div class="english">
+          <h2 data-to="legal">Legal</h2>
+          <p><strong>Note: the legalities discussed here concern this website
+              itself, not the software package <em>"smoothscroll-anchor-polyfill"</em>,
+              and are required for compliance with German & European law. <em>"smoothscroll-anchor-polyfill"</em>
+              itself is licensed under MIT license, for more information
+              check out the respective <a href="https://github.com/jonaskuske/smoothscroll-anchor-polyfill">GitHub
+                repository</a>.</strong></p>
+          <h3>Imprint</h3>
+          <p><b>Information in accordance with section §5 TMG</b></p>
+          <address>
+            Jonas Kuske<br>
+            Sielstraße 5<br>
+            27568 Bremerhaven
+          </address>
+          <br>
+          <p><b>Contact</b></p>
+          <p>
+            Phone: +491603336948<br>
+            Mail: mail@jonaskuske.com<br>
+          </p>
+
+          <p><b>Person responsible for content in accordance with 55 Abs. 2
+              RStV:</b></p>
+          <p>Jonas Kuske<br>Sielstraße 5<br>27568 Bremerhaven</p>
+
+          <h4>Disclaimer</h4>
+          <p><b>Accountability for content</b></p>
+          <p>The contents of our pages have been created with the utmost care.
+            However, we cannot guarantee the contents' accuracy, completeness
+            or topicality. According to statutory provisions, we are
+            furthermore responsible for our own content on these web pages.In
+            this context, please note that we are accordingly not obliged to
+            monitor merely the transmitted or saved information of third
+            parties, or investigate circumstances pointing to illegal activity.
+            Our obligations to remove or block the use of information under
+            generally applicable laws remain unaffected by this as per §§ 8 to
+            10 of the Telemedia Act(TMG).</p>
+
+          <p><b>Accountability for links</b></p>
+          <p>Responsibility for the content of external links (to web pages of
+            third
+            parties) lies solely with the operators of the linked pages. No
+            violations were
+            evident to us at the time of linking. Should any legal infringement
+            become
+            known to us, we will remove the respective link immediately.</p>
+
+          <h4>Copyright</h4>
+          <p>Our web pages and their contents are subject to German copyright
+            law.</p>
+          <h3>Privacy</h3>
+          <p>With the use of this website you agree to the collection and
+            processing of data as described below.
+            The website can be visited with out prior sign-up, when visiting
+            the site the following data might be stored on the server (managed
+            by <a href="https://github.com" target="_blank" rel="noopener">GitHub</a>)
+            in the form of so-called "server log files" for statistical use.</p>
+          <ul>
+            <li>Visited website</li>
+            <li>Time when website was loaded</li>
+            <li>Amount of data sent in bytes</li>
+            <li>Source/referer which lead you to this site</li>
+            <li>Used browser</li>
+            <li>Used operating system</li>
+            <li>Used IP address</li>
+          </ul>
+          <p>This website is using service <a href="https://fonts.google.com"
+              target="_blank" rel="noopener">Google Fonts</a> to load font
+            files. While loading the font files – which happens automatically
+            when visiting this site – the pieces of data listed above might
+            be gathered and stored by service provider Google as well.</p>
+          <p>If you contact the operator of this website through the given
+            contact possibilities your given information will be stored solely
+            to reply to and process your inquiry. Without your permission
+            collected information will never be shared with third parties. At
+            your request you can gain insight into or request the complete
+            deletion of all data collected about you.</p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="container">
+      <div class="row row-center row-no-padding">
+        <p>© 2018, Jonas Kuske</p>
+      </div>
+    </footer>
+
+    <!-- Update URL when clicking on title without triggering navigation -->
+    <script>
+      Array.prototype.slice.call(document.querySelectorAll('h1[id],h2[id],h3[id],h4[id],h1[data-to],h2[data-to],h3[data-to],h4[data-to]'))
+        .forEach(function (element) {
+          element.addEventListener('click', function () {
+            var to = element.id || element.getAttribute('data-to');
+
+            if (to !== null && to !== undefined) {
+              var url = location.href;
+
+              if (url.indexOf('#') > 0) url = url.replace(/#.*$/, '#' + to);
+              else url = url + '#' + to;
+
+              history.replaceState(null, document.title, url);
+            }
+          })
+        });
+    </script>
+  </body>
+
+</html>

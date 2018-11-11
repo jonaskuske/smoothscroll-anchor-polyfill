@@ -1,5 +1,5 @@
 # smoothscroll-anchor-polyfill
-⚓ Apply smooth scroll to anchor links to replicate CSS
+⚓ Apply smooth scroll to anchor links to replicate CSS property `scroll-behavior`
 
 > ⚠ Requires smoothscroll polyfill like [smoothscroll-polyfill](http://iamdustan.com/smoothscroll/) to work! ⚠
 

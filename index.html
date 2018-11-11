@@ -88,7 +88,10 @@
           But even if you use those, navigation happening due to clicks on
           anchor elements is still instant without any smoothness: only the
           JavaScript APIs are polyfilled.<br>
-          <b>This little script aims to fix this.</b>
+          <b>This little script aims to fix this.</b> If the browser does not
+          support native Scroll Behavior, it will wire up all matching anchor
+          links so they use the (polyfilled and thus smooth) JS APIs for
+          navigation. Let the scrolling begin!
         </p>
       </section>
 
@@ -96,13 +99,13 @@
         <h2 data-to="usage">Usage</h2>
         <h3 id="requirements">Requirements</h3>
         <p>Since this script uses the JavaScript scroll APIs and relies on
-          their smooth scroll functionality to actually work, you'll need a
-          polyfill for the Scroll Behavior spec in order for this one to work.
-          <a href="http://iamdustan.com/smoothscroll/"><code>smoothscroll-polyfill</code></a>
+          their smooth scroll functionality to operate, you'll need a
+          polyfill for the Scroll Behavior spec in order for this script to
+          make a difference. <a href="http://iamdustan.com/smoothscroll/"><code>smoothscroll-polyfill</code></a>
           is used as example throughout this site, but you may just as well use
-          another polyfill - or write your own implementation.</p>
+          another polyfill – or write your own implementation.</p>
         <p>⚠ Furthermore, this script <b>assumes that <code style="padding:0;margin:0;font-size:inherit;">scroll-behavior</code>
-            is set globally</b> in your CSS. If you don't do that,
+            is set globally</b> to smooth in your CSS. If you don't do that,
           scroll behavior <em>will differ between browsers with and without
             native support</em> for Scroll Behavior. Set it as follows:</p>
         <pre><code>&lt;style>
@@ -123,7 +126,8 @@ html {
 &lt;script src="https://unpkg.com/smoothscroll-anchor-polyfill">&lt;/script>
 </code></pre>
         <h3 id="npm">With npm</h3>
-        <p>Alternatively, if you're using npm, you can install using
+        <p style="overflow:auto;">Alternatively, if you're using npm, you can
+          install using
           <code>npm install smoothscroll-anchor-polyfill</code> and then use
           the polyfill by
           requiring/importing it in your JS.</p>

@@ -66,6 +66,9 @@
    * @param {event} evt
    */
   function handleClick(evt) {
+    // Abort if shift/ctrl-click or not primary click (button !== 0)
+    if (evt.metaKey || evt.ctrlKey || evt.shiftKey || evt.button !== 0) return;
+
     var clickTarget = getEventTarget(evt);
     var anchor = findInParents(clickTarget, isAnchorToLocalElement);
     if (!anchor) return;

@@ -33,6 +33,21 @@
   }
 
   /**
+   * Focuses an element, if it's not focused after the first try,
+   * allow focusing by adjusting tabIndex and retry
+   * @param {HTMLElement} el
+   */
+  function focusElement(el) {
+    el.focus();
+    if (document.activeElement !== el) {
+      el.setAttribute('tabIndex', '-1');
+      // TODO: Only remove outline if it comes from the UA, not the user CSS
+      el.style.outline = 'none';
+      el.focus();
+    }
+  }
+
+  /**
    * Walks up the DOM starting from a given element until an element satisfies the validate function
    * @param {HTMLElement} element The element from where to start validating
    * @param {Function} validate The validation function
@@ -64,8 +79,13 @@
     if (isScrollTop || target) {
       evt.preventDefault();
 
-      if (isScrollTop) window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
-      else target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (isScrollTop) {
+        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+        focusElement(document.body);
+      } else {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        focusElement(target);
+      }
     }
 
   }

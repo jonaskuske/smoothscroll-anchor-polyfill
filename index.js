@@ -19,19 +19,16 @@
 
   /**
    * Check if an element is an anchor pointing to a target on the current page
-   * @param {HTMLElement} element
+   * @param {HTMLElement} el
    */
-  function isAnchorToLocalElement(element) {
-    var localHostname = location.hostname;
-    var localPathname = location.pathname;
-
+  function isAnchorToLocalElement(el) {
     return (
       // Is an anchor
-      element.tagName && element.tagName.toLowerCase() === 'a' &&
+      el.tagName && el.tagName.toLowerCase() === 'a' &&
       // Targets an element
-      element.href.indexOf('#') > 0 &&
+      el.href.indexOf('#') > -1 &&
       // Target is on current page
-      element.hostname === localHostname && element.pathname === localPathname
+      el.hostname === location.hostname && el.pathname === location.pathname
     );
   }
 
@@ -48,7 +45,9 @@
   }
 
   /**
-   * Check if the clicked target is an anchor pointing to a local element, if so prevent the default behavior and handle the scrolling using the native JavaScript scroll APIs so smoothscroll-Polyfills apply
+   * Check if the clicked target is an anchor pointing to a local element,
+   * if so prevent the default behavior and handle the scrolling using the
+   * native JavaScript scroll APIs so smoothscroll polyfills apply
    * @param {event} evt
    */
   function handleClick(evt) {

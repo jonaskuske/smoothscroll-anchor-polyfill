@@ -1,7 +1,7 @@
 # smoothscroll-anchor-polyfill
 ⚓ Apply smooth scroll to anchor links to replicate CSS property `scroll-behavior`
 
-> ⚠ Requires a polyfill for smoothscrolling like [smoothscroll-polyfill](http://iamdustan.com/smoothscroll/) to work! ⚠
+> ⚠ Requires a polyfill for `window.scroll()` and `Element.scrollIntoView()` (e.g. [smoothscroll-polyfill](http://iamdustan.com/smoothscroll/)) to work! ⚠
 
 ## Installation
 
@@ -22,5 +22,6 @@ import 'smoothscroll-anchor-polyfill';
 
 Found [here](https://jonaskuske.github.io/smoothscroll-anchor-polyfill).
 
+___
 
 **PRs welcome!**

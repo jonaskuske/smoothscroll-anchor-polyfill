@@ -1,9 +1,20 @@
-# smoothscroll-anchor-polyfill
-⚓ Apply smooth scroll to anchor links to polyfill the CSS property `scroll-behavior`
+<p align="center">
+  <a href="https://www.npmjs.com/package/smoothscroll-anchor-polyfill"><img align="center" src="https://img.shields.io/npm/v/smoothscroll-anchor-polyfill.svg" alt="NPM version"></a>
+  <a href="https://travis-ci.org/jonaskuske/smoothscroll-anchor-polyfill"><img align="center" src="https://travis-ci.org/jonaskuske/smoothscroll-anchor-polyfill.svg?branch=dev" alt="Build status"></a>
+  <a href="./LICENSE"><img align="center" src="https://img.shields.io/npm/l/smoothscroll-anchor-polyfill.svg" alt="License"></a>
+</p>  
 
-> ⚠ Requires smooth scroll for `window.scroll()` and `Element.scrollIntoView()` (e.g. [smoothscroll-polyfill](http://iamdustan.com/smoothscroll/)) to work!
+&nbsp;  
+&nbsp;  
+
+<h1 align="center">smoothscroll-anchor-polyfill</h1>
+<p align="center">⚓ Apply smooth scroll to anchor links to polyfill the CSS property <code>scroll-behavior</code></p>
+
+&nbsp;  
+&nbsp;  
 
 ## Browser support
+⚠ Requires smooth scroll for `window.scroll()` and `Element.scrollIntoView()` (e.g. [smoothscroll-polyfill](http://iamdustan.com/smoothscroll/)) to work!
 
 | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/edge/edge_48x48.png" alt="IE / Edge" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>IE / Edge | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png" alt="Firefox" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Firefox | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png" alt="Chrome" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Chrome | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari/safari_48x48.png" alt="Safari" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Safari | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari-ios/safari-ios_48x48.png" alt="iOS Safari" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>iOS Safari | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/opera/opera_48x48.png" alt="Opera" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Opera |
 | --------- | --------- | --------- | --------- | --------- | --------- |

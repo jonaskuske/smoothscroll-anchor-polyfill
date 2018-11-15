@@ -21,3 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - The polyfill now properly handles Shift/Meta keys and allows for opening links in new windows by shift-clicking instead of preventing it with `event.preventDefault()`
 - The docs website now works in Internet Explorer 9, polyfills for `Element.classList`, `requestAnimationFrame` + an alternative for flexbox layouts have been added
+
+## [0.9.4] - 2018-11-11
+### Fixed
+- After a click, the DOM is now searched upwards for a matching anchor link instead of just checking the event target alone. Fixes issue with nested elements inside anchor links

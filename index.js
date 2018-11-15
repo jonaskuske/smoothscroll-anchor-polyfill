@@ -91,32 +91,30 @@
     var anchor = findInParents(clickTarget, isAnchorToLocalElement);
     if (!anchor) return;
 
-    // If href ends with '#', no id: just scroll to the top
-    var isScrollTop = anchor.href.match(/#$/);
-    // Try to retrieve the targeted element
-    var targetId = !isScrollTop && anchor.hash.slice(1);
-    var target = !isScrollTop && document.getElementById(targetId);
+    var hash = anchor.hash;
 
-    if (isScrollTop || target) {
+    // Retrieve target if an id is specified in the hash, otherwise use body.
+    // If hash is "#top" and no target with id "top" was found, also use body
+    // See https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#attr-href
+    var target = hash ? document.getElementById(hash.slice(1)) : document.body;
+    if (hash === '#top' && !target) target = document.body;
+
+    if (target) {
       // Prevent default browser behavior to avoid a jump to the anchor target
       evt.preventDefault();
       // Clear potential pending focus change triggered by a previous scroll
       if (!supportsPreventScroll) window.clearTimeout(pendingFocusChange);
 
-      if (isScrollTop) {
-        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
-      } else {
-        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
+      // Use scroll APIs to scroll to top (if target is body) or to the element
+      // This allows polyfills for these APIs to do their smooth scrolling magic
+      var scrollTop = target === document.body;
+      if (scrollTop) window.scroll({ top: 0, left: 0, behavior: 'smooth' });
+      else target.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
       // If the browser supports preventScroll: immediately focus the target
       // Otherwise schedule the focus so the smoothscroll isn't interrupted
-      if (supportsPreventScroll) focusElement(isScrollTop ? document.body : target);
-      else pendingFocusChange = setTimeout(
-        focusElement,
-        450,
-        isScrollTop ? document.body : target
-      );
+      if (supportsPreventScroll) focusElement(target);
+      else pendingFocusChange = setTimeout(focusElement, 450, target);
     }
 
   }

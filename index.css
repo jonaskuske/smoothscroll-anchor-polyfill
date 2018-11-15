@@ -70,13 +70,24 @@ section, .fullscreen {
 
 .fullscreen {
   height: 100vh;
+  text-align: center;
 }
 
 .fullscreen {
+  position: relative;
+}
+
+html:not(.flex-center) .fullscreen>div {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.flex-center .fullscreen {
   display: flex;
   justify-content: center;
   align-items: center;
-  text-align: center;
 }
 
 .fullscreen p {

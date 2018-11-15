@@ -3,8 +3,8 @@
   var isBrowser = typeof window !== 'undefined';
 
   // Abort if run outside browser or if smoothscroll is natively supported and
-  // __forceSmoothScrollAnchorPolyfill is not set to true by user
-  if (!isBrowser || window.__forceSmoothScrollAnchorPolyfill__ !== true && 'scrollBehavior' in document.documentElement.style) {
+  // __forceSmoothscrollAnchorPolyfill__ is not set to true by user
+  if (!isBrowser || window.__forceSmoothscrollAnchorPolyfill__ !== true && 'scrollBehavior' in document.documentElement.style) {
     return;
   }
 

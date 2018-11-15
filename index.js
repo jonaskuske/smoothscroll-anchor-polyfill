@@ -3,10 +3,24 @@
   var isBrowser = typeof window !== 'undefined';
 
   // Abort if run outside browser or if smoothscroll is natively supported and
-  // __forceSmoothScrollAnchorPolyfill is not set to true by user
-  if (!isBrowser || window.__forceSmoothScrollAnchorPolyfill__ !== true && 'scrollBehavior' in document.documentElement.style) {
+  // __forceSmoothscrollAnchorPolyfill__ is not set to true by user
+  if (!isBrowser || window.__forceSmoothscrollAnchorPolyfill__ !== true && 'scrollBehavior' in document.documentElement.style) {
     return;
   }
+
+  // Check if browser supports focus without automatic scrolling (preventScroll)
+  var supportsPreventScroll = false;
+  try {
+    var el = document.createElement('a');
+    // Define getter for preventScroll to find out if the browser accesses it
+    var preppedFocusOption = Object.defineProperty({}, 'preventScroll', {
+      get: function () {
+        supportsPreventScroll = true;
+      }
+    });
+    // Trigger focus – if browser uses preventScroll the var will be set to true
+    el.focus(preppedFocusOption);
+  } catch (e) { }
 
   /**
    * Get the target element of an event
@@ -19,20 +33,48 @@
 
   /**
    * Check if an element is an anchor pointing to a target on the current page
-   * @param {HTMLElement} element
+   * @param {HTMLElement} el
    */
-  function isAnchorToLocalElement(element) {
-    var localHostname = location.hostname;
-    var localPathname = location.pathname;
-
+  function isAnchorToLocalElement(el) {
     return (
       // Is an anchor
-      element.tagName && element.tagName.toLowerCase() === 'a' &&
+      el.tagName && el.tagName.toLowerCase() === 'a' &&
       // Targets an element
-      element.href.indexOf('#') > 0 &&
+      el.href.indexOf('#') > -1 &&
       // Target is on current page
-      element.hostname === localHostname && element.pathname === localPathname
+      el.hostname === location.hostname && el.pathname === location.pathname
     );
+  }
+
+  /**
+   * Focuses an element, if it's not focused after the first try,
+   * allows focusing by adjusting tabIndex and retry
+   * @param {HTMLElement} el
+   */
+  function focusElement(el) {
+    el.focus({ preventScroll: true });
+    if (document.activeElement !== el) {
+      el.setAttribute('tabindex', '-1');
+      // TODO: Only remove outline if it comes from the UA, not the user CSS
+      el.style.outline = 'none';
+      el.focus({ preventScroll: true });
+    }
+  }
+
+  /**
+   * Returns the element whose id matches the hash or
+   * document.body if the hash is "#top" or "" (empty string)
+   * @param {string} hash
+   */
+  function getScrollTarget(hash) {
+    if (typeof hash !== 'string') return null;
+
+    // Retrieve target if an id is specified in the hash, otherwise use body.
+    // If hash is "#top" and no target with id "top" was found, also use body
+    // See https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#attr-href
+    var target = hash ? document.getElementById(hash.slice(1)) : document.body;
+    if (hash === '#top' && !target) target = document.body;
+    return target;
   }
 
   /**
@@ -47,29 +89,109 @@
     return false;
   }
 
+  // Stores the setTimeout id of pending focus changes, allows aborting them
+  var pendingFocusChange;
+
   /**
-   * Check if the clicked target is an anchor pointing to a local element, if so prevent the default behavior and handle the scrolling using the native JavaScript scroll APIs so smoothscroll-Polyfills apply
+   * Scrolls to a given element or to the top if the given element
+   * is document.body, then focuses the element
+   * @param {HTMLElement} target
+   */
+  function triggerSmoothscroll(target) {
+    // Clear potential pending focus change triggered by a previous scroll
+    if (!supportsPreventScroll) window.clearTimeout(pendingFocusChange);
+
+    // Use JS scroll APIs to scroll to top (if target is body) or to the element
+    // This allows polyfills for these APIs to do their smooth scrolling magic
+    var scrollTop = target === document.body;
+    if (scrollTop) window.scroll({ top: 0, left: 0, behavior: 'smooth' });
+    else target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    // If the browser supports preventScroll: immediately focus the target
+    // Otherwise schedule the focus so the smoothscroll isn't interrupted
+    if (supportsPreventScroll) focusElement(target);
+    else pendingFocusChange = setTimeout(focusElement.bind(null, target), 450);
+  }
+
+  /**
+   * Check if the clicked target is an anchor pointing to a local element,
+   * if so prevent the default behavior and handle the scrolling using the
+   * native JavaScript scroll APIs so smoothscroll polyfills apply
    * @param {event} evt
    */
   function handleClick(evt) {
-    var clickTarget = getEventTarget(evt);
-    var anchor = findInParents(clickTarget, isAnchorToLocalElement);
+    // Abort if shift/ctrl-click or not primary click (button !== 0)
+    if (evt.metaKey || evt.ctrlKey || evt.shiftKey || evt.button !== 0) return;
+
+    // Check the DOM from the click target upwards if a local anchor was clicked
+    var anchor = findInParents(getEventTarget(evt), isAnchorToLocalElement);
     if (!anchor) return;
 
-    // If href ends with '#', no id: just scroll to the top
-    var isScrollTop = anchor.href.match(/#$/);
-    // Try to retrieve the targeted element
-    var targetId = !isScrollTop && anchor.hash.slice(1);
-    var target = !isScrollTop && document.getElementById(targetId);
+    // Find the element targeted by the hash
+    var hash = anchor.hash;
+    var target = getScrollTarget(hash);
 
-    if (isScrollTop || target) {
+    if (target) {
+      // Prevent default browser behavior to avoid a jump to the anchor target
       evt.preventDefault();
 
-      if (isScrollTop) window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
-      else target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // Trigger the smooth scroll
+      triggerSmoothscroll(target);
+
+      // Append the hash to the URL
+      if (history.pushState) {
+        history.pushState(null, document.title, (hash || '#'));
+      }
     }
 
   }
 
+  /**
+   * Returns the scroll offset towards the top
+   */
+  function getScrollTop() {
+    return document.documentElement.scrollTop || document.body.scrollTop;
+  }
+
+  /**
+   * Tries to undo the automatic, instant scroll caused by a hashchange
+   * and instead scrolls smoothly to the new hash target
+   */
+  function attachHashchangeListener() {
+    // Some browsers don't trigger a scroll event before the hashchange,
+    // so to undo, the position last reported is the one we need to go back to.
+    // In others (e.g. IE) the scroll listener is triggered before the
+    // hashchange occurs, thus the last reported position is already the new one
+    // updated by the hashchange – we need the second last to undo.
+    var lastTwoScrollPos = [];
+
+    // Keep the scroll positions up to date
+    document.addEventListener('scroll', function () {
+      lastTwoScrollPos[0] = lastTwoScrollPos[1];
+      lastTwoScrollPos[1] = getScrollTop();
+    });
+
+    window.addEventListener("hashchange", function () {
+      var target = getScrollTarget(location.hash);
+      if (!target) return;
+
+      // If the position last reported by the scroll listener is the same as the
+      // current one caused by a hashchange, go back to second last – else last
+      var currentPos = getScrollTop();
+      var top = lastTwoScrollPos[lastTwoScrollPos[1] === currentPos ? 0 : 1];
+
+      // Undo the scroll caused by the hashchange...
+      window.scroll({ top: top, behavior: 'instant' });
+      // ...and instead smoothscroll to the target
+      triggerSmoothscroll(target);
+    });
+  }
+
+  // Attach listeners if body is already available, else wait until DOM is ready
+  if (document.body) attachHashchangeListener();
+  else document.addEventListener("DOMContentLoaded", attachHashchangeListener);
+
+  // Register the click handler listening for clicks on anchor links
   document.addEventListener('click', handleClick, false);
-})()
+
+})();

@@ -1,7 +1,7 @@
 # smoothscroll-anchor-polyfill
 ⚓ Apply smooth scroll to anchor links to polyfill the CSS property `scroll-behavior`
 
-> ⚠ Requires smooth scroll for `window.scroll()` and `Element.scrollIntoView()` (e.g. [smoothscroll-polyfill](https://iamdustan.com/smoothscroll/)) to work!
+> ⚠ Requires smooth scroll for `window.scroll()` and `Element.scrollIntoView()` (e.g. [smoothscroll-polyfill](http://iamdustan.com/smoothscroll/)) to work!
 
 ## Browser support
 
@@ -44,7 +44,8 @@ You can specify the property as the name of a custom font family, your actual fo
 > This process can also be automated using a [PostCSS plugin](https://github.com/jonaskuske/postcss-smoothscroll-anchor-polyfill), so you can write regular CSS and don't have to bother with font-families. It just works™
 
 ### 2. Install the polyfill
-
+Because this polyfill only wires up anchor links with the browser's native `window.scroll()` and `element.scrollIntoView()` methods, you'll need to load a polyfill providing smooth scroll to these methods in addition to the steps outlined below.
+> [smoothscroll-polyfill](http://iamdustan.com/smoothscroll/) works, but you can just as well use another one or write your own implementation. [Learn More](https://jonaskuske.github.io/smoothscroll-anchor-polyfill#requirements)
 #### 2a. From a CDN
 ```html
 <script src="https://unpkg.com/smoothscroll-anchor-polyfill"></script>

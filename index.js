@@ -1,17 +1,19 @@
 (function () {
   // window is undefined in Node and other non-browser environments
   var isBrowser = typeof window !== 'undefined';
+  var w = window, d = document, docEl = d.documentElement;
+  var forcePolyfill = w.__forceSmoothscrollAnchorPolyfill__ === true;
 
   // Abort if run outside browser or if smoothscroll is natively supported and
   // __forceSmoothscrollAnchorPolyfill__ is not set to true by user
-  if (!isBrowser || window.__forceSmoothscrollAnchorPolyfill__ !== true && 'scrollBehavior' in document.documentElement.style) {
+  if (!isBrowser || !forcePolyfill && 'scrollBehavior' in docEl.style) {
     return;
   }
 
   // Check if browser supports focus without automatic scrolling (preventScroll)
   var supportsPreventScroll = false;
   try {
-    var el = document.createElement('a');
+    var el = d.createElement('a');
     // Define getter for preventScroll to find out if the browser accesses it
     var preppedFocusOption = Object.defineProperty({}, 'preventScroll', {
       get: function () {
@@ -27,7 +29,7 @@
    * @param {event} evt
    */
   function getEventTarget(evt) {
-    evt = evt || window.event;
+    evt = evt || w.event;
     return evt.target || evt.srcElement;
   }
 
@@ -53,7 +55,7 @@
    */
   function focusElement(el) {
     el.focus({ preventScroll: true });
-    if (document.activeElement !== el) {
+    if (d.activeElement !== el) {
       el.setAttribute('tabindex', '-1');
       // TODO: Only remove outline if it comes from the UA, not the user CSS
       el.style.outline = 'none';
@@ -72,8 +74,8 @@
     // Retrieve target if an id is specified in the hash, otherwise use body.
     // If hash is "#top" and no target with id "top" was found, also use body
     // See https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#attr-href
-    var target = hash ? document.getElementById(hash.slice(1)) : document.body;
-    if (hash === '#top' && !target) target = document.body;
+    var target = hash ? d.getElementById(hash.slice(1)) : d.body;
+    if (hash === '#top' && !target) target = d.body;
     return target;
   }
 
@@ -99,12 +101,12 @@
    */
   function triggerSmoothscroll(target) {
     // Clear potential pending focus change triggered by a previous scroll
-    if (!supportsPreventScroll) window.clearTimeout(pendingFocusChange);
+    if (!supportsPreventScroll) clearTimeout(pendingFocusChange);
 
     // Use JS scroll APIs to scroll to top (if target is body) or to the element
     // This allows polyfills for these APIs to do their smooth scrolling magic
-    var scrollTop = target === document.body;
-    if (scrollTop) window.scroll({ top: 0, left: 0, behavior: 'smooth' });
+    var scrollTop = target === d.body;
+    if (scrollTop) w.scroll({ top: 0, left: 0, behavior: 'smooth' });
     else target.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
     // If the browser supports preventScroll: immediately focus the target
@@ -139,9 +141,7 @@
       triggerSmoothscroll(target);
 
       // Append the hash to the URL
-      if (history.pushState) {
-        history.pushState(null, document.title, (hash || '#'));
-      }
+      if (history.pushState) history.pushState(null, d.title, (hash || '#'));
     }
 
   }
@@ -150,7 +150,7 @@
    * Returns the scroll offset towards the top
    */
   function getScrollTop() {
-    return document.documentElement.scrollTop || document.body.scrollTop;
+    return docEl.scrollTop || d.body.scrollTop;
   }
 
   /**
@@ -166,12 +166,12 @@
     var lastTwoScrollPos = [];
 
     // Keep the scroll positions up to date
-    document.addEventListener('scroll', function () {
+    d.addEventListener('scroll', function () {
       lastTwoScrollPos[0] = lastTwoScrollPos[1];
       lastTwoScrollPos[1] = getScrollTop();
     });
 
-    window.addEventListener("hashchange", function () {
+    w.addEventListener("hashchange", function () {
       var target = getScrollTarget(location.hash);
       if (!target) return;
 
@@ -181,17 +181,17 @@
       var top = lastTwoScrollPos[lastTwoScrollPos[1] === currentPos ? 0 : 1];
 
       // Undo the scroll caused by the hashchange...
-      window.scroll({ top: top, behavior: 'instant' });
+      w.scroll({ top: top, behavior: 'instant' });
       // ...and instead smoothscroll to the target
       triggerSmoothscroll(target);
     });
   }
 
   // Attach listeners if body is already available, else wait until DOM is ready
-  if (document.body) attachHashchangeListener();
-  else document.addEventListener("DOMContentLoaded", attachHashchangeListener);
+  if (d.body) attachHashchangeListener();
+  else d.addEventListener("DOMContentLoaded", attachHashchangeListener);
 
   // Register the click handler listening for clicks on anchor links
-  document.addEventListener('click', handleClick, false);
+  d.addEventListener('click', handleClick, false);
 
 })();

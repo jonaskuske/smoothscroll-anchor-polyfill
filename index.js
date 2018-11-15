@@ -8,6 +8,20 @@
     return;
   }
 
+  // Check if browser supports focus without automatic scrolling (preventScroll)
+  var supportsPreventScroll = false;
+  try {
+    var el = document.createElement('a');
+    // Define getter for preventScroll to find out if the browser accesses it
+    var preppedFocusOption = Object.defineProperty({}, 'preventScroll', {
+      get: function () {
+        supportsPreventScroll = true;
+      }
+    });
+    // Trigger focus – if browser uses preventScroll the var will be set to true
+    el.focus(preppedFocusOption);
+  } catch (e) { }
+
   /**
    * Get the target element of an event
    * @param {event} evt
@@ -38,12 +52,12 @@
    * @param {HTMLElement} el
    */
   function focusElement(el) {
-    el.focus();
+    el.focus({ preventScroll: true });
     if (document.activeElement !== el) {
       el.setAttribute('tabIndex', '-1');
       // TODO: Only remove outline if it comes from the UA, not the user CSS
       el.style.outline = 'none';
-      el.focus();
+      el.focus({ preventScroll: true });
     }
   }
 
@@ -59,6 +73,9 @@
     return false;
   }
 
+  // Stores the setTimeout id of pending focus changes, allows aborting them
+  var pendingFocusChange;
+
   /**
    * Check if the clicked target is an anchor pointing to a local element,
    * if so prevent the default behavior and handle the scrolling using the
@@ -70,6 +87,7 @@
     if (evt.metaKey || evt.ctrlKey || evt.shiftKey || evt.button !== 0) return;
 
     var clickTarget = getEventTarget(evt);
+    // Check the DOM from the click target upwards if a local anchor was clicked
     var anchor = findInParents(clickTarget, isAnchorToLocalElement);
     if (!anchor) return;
 
@@ -80,15 +98,25 @@
     var target = !isScrollTop && document.getElementById(targetId);
 
     if (isScrollTop || target) {
+      // Prevent default browser behavior to avoid a jump to the anchor target
       evt.preventDefault();
+      // Clear potential pending focus change triggered by a previous scroll
+      if (!supportsPreventScroll) window.clearTimeout(pendingFocusChange);
 
       if (isScrollTop) {
         window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
-        focusElement(document.body);
       } else {
         target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        focusElement(target);
       }
+
+      // If the browser supports preventScroll: immediately focus the target
+      // Otherwise schedule the focus so the smoothscroll isn't interrupted
+      if (supportsPreventScroll) focusElement(isScrollTop ? document.body : target);
+      else pendingFocusChange = setTimeout(
+        focusElement,
+        450,
+        isScrollTop ? document.body : target
+      );
     }
 
   }

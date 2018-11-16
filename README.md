@@ -22,6 +22,7 @@
 
 > \* hashchange navigation triggered by forwards/backwards buttons isn't smooth despite native support. [Learn more](https://jonaskuske.github.io/smoothscroll-anchor-polyfill#hashchange)
 
+&nbsp;  
 
 ## Usage
 
@@ -71,6 +72,9 @@ then
 ```js
 import 'smoothscroll-anchor-polyfill';
 ```
+
+&nbsp;  
+
 ## Full Documentation & Demo
 
 The full documentation with advanced installation instructions, known limitations, features like enabling and disabling the smooth scroll and more can be found at
@@ -78,6 +82,7 @@ The full documentation with advanced installation instructions, known limitation
 The documentation site itself is built as a smooth scrolling one-page design, utilizing this polyfill.
 
 &nbsp;  
+&nbsp;
 
 ___
 

@@ -1,14 +1,13 @@
 (function () {
-  // window is undefined in Node and other non-browser environments
+  // Abort if outside browser (window is undefined in Node etc.)
   var isBrowser = typeof window !== 'undefined';
+  if (!isBrowser) return;
+
   var w = window, d = document, docEl = d.documentElement;
   var forcePolyfill = w.__forceSmoothscrollAnchorPolyfill__ === true;
 
-  // Abort if run outside browser or if smoothscroll is natively supported and
-  // __forceSmoothscrollAnchorPolyfill__ is not set to true by user
-  if (!isBrowser || !forcePolyfill && 'scrollBehavior' in docEl.style) {
-    return;
-  }
+  // Abort if smoothscroll is natively supported and force flag is not set
+  if (!forcePolyfill && 'scrollBehavior' in docEl.style) return;
 
   // Check if browser supports focus without automatic scrolling (preventScroll)
   var supportsPreventScroll = false;

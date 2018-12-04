@@ -1,5 +1,7 @@
 html {
   scroll-behavior: smooth;
+  /* Additionally specified in custom font-family so polyfill can parse it */
+  font-family: 'scroll-behavior:smooth';
 }
 
 body {

@@ -24,6 +24,47 @@
     el.focus(preppedFocusOption);
   } catch (e) { }
 
+  // Regex to extract the value following the scroll-behavior: property name
+  var extractValue = /scroll-behavior:[\s]*([^;"`'\s]+)/;
+
+  /**
+   * Returns true if scroll-behavior: smooth is set somewhere and not
+   * overwritten by a higher-specifity declaration, else returns false
+   */
+  function shouldSmoothscroll() {
+    // Values to check for set scroll-behavior in order of priority/specificity
+    var valuesToCheck = [
+      // Priority 1: behavior specified as inline property
+      // Allows toggling smoothscroll from JS (docEl.style.scrollBehavior = ...)
+      docEl.style.scrollBehavior,
+      // Priority 2: behavior specified inline in style attribute
+      (extractValue.exec(docEl.getAttribute('style')) || [])[1],
+      // Priority 3: behavior specified in fontFamily
+      // Behaves like regular CSS, e.g. allows using media queries
+      (extractValue.exec(getComputedStyle(docEl).fontFamily) || [])[1]
+    ];
+    // Loop over values in specified order, return once a valid value is found
+    for (var i = 0; i++ < valuesToCheck.length;) {
+      var specifiedBehavior = getScrollBehavior(valuesToCheck[i]);
+      if (specifiedBehavior !== null) return specifiedBehavior;
+    }
+    // No value found? Return false, no set value = no smoothscroll :(
+    return false;
+  }
+
+  /**
+   * If a valid CSS property value for scroll-behavior is passed, returns
+   * whether it specifies smooth scroll behavior or not, else returns null
+   * @param {any} value The value to check
+   * @returns {boolean|undefined}
+   */
+  function getScrollBehavior(value) {
+    var status = null;
+    if (/^smooth$/.test(value)) status = true;
+    if (/^(initial|inherit|auto|unset)$/.test(value)) status = false;
+    return status;
+  }
+
   /**
    * Get the target element of an event
    * @param {event} evt
@@ -124,6 +165,8 @@
   function handleClick(evt) {
     // Abort if shift/ctrl-click or not primary click (button !== 0)
     if (evt.metaKey || evt.ctrlKey || evt.shiftKey || evt.button !== 0) return;
+    // scroll-behavior not set to smooth? Bail out, let browser handle it
+    if (!shouldSmoothscroll()) return;
 
     // Check the DOM from the click target upwards if a local anchor was clicked
     var anchor = findInParents(getEventTarget(evt), isAnchorToLocalElement);
@@ -172,6 +215,9 @@
     });
 
     w.addEventListener("hashchange", function () {
+      // scroll-behavior not set to smooth? Bail out, let browser handle it
+      if (!shouldSmoothscroll()) return;
+
       var target = getScrollTarget(location.hash);
       if (!target) return;
 

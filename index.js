@@ -1,13 +1,33 @@
-(function () {
+/**
+ * @license
+ * smoothscroll-anchor-polyfill __VERSION__
+ * (c) 2018 Jonas Kuske
+ * Released under the MIT License.
+ */
+(function (indexFn) {
+  if (typeof process !== 'undefined' && process.env.NODE_ENV === 'test') {
+    // Test env: export function so it can run multiple times
+    exports.polyfill = indexFn;
+  } else {
+    // Else run immediately, no time to waste!
+    indexFn();
+  }
+})(function () {
+
+  /* */
+
+  // Noop to be returned if polyfill returns early. Will be assigned later
+  var destroy = function () { };
+
   // Abort if outside browser (window is undefined in Node etc.)
   var isBrowser = typeof window !== 'undefined';
-  if (!isBrowser) return;
+  if (!isBrowser) return destroy;
 
   var w = window, d = document, docEl = d.documentElement;
-  var forcePolyfill = w.__forceSmoothscrollAnchorPolyfill__ === true;
 
+  var forcePolyfill = w.__forceSmoothscrollAnchorPolyfill__ === true;
   // Abort if smoothscroll is natively supported and force flag is not set
-  if (!forcePolyfill && 'scrollBehavior' in docEl.style) return;
+  if (!forcePolyfill && 'scrollBehavior' in docEl.style) return destroy;
 
   // Check if browser supports focus without automatic scrolling (preventScroll)
   var supportsPreventScroll = false;
@@ -23,12 +43,12 @@
     el.focus(preppedFocusOption);
   } catch (e) { }
 
-  // Regex to extract the value following the scroll-behavior: property name
+  // Regex to extract the value following the scroll-behavior property name
   var extractValue = /scroll-behavior:[\s]*([^;"`'\s]+)/;
 
   /**
-   * Returns true if scroll-behavior: smooth is set somewhere and not
-   * overwritten by a higher-specifity declaration, else returns false
+   * Returns true if scroll-behavior: smooth is set and not overwritten
+   * by a higher-specifity declaration, else returns false
    */
   function shouldSmoothscroll() {
     // Values to check for set scroll-behavior in order of priority/specificity
@@ -43,7 +63,7 @@
       (extractValue.exec(getComputedStyle(docEl).fontFamily) || [])[1]
     ];
     // Loop over values in specified order, return once a valid value is found
-    for (var i = 0; i++ < valuesToCheck.length;) {
+    for (var i = 0; i < valuesToCheck.length; i++) {
       var specifiedBehavior = getScrollBehavior(valuesToCheck[i]);
       if (specifiedBehavior !== null) return specifiedBehavior;
     }
@@ -90,7 +110,7 @@
 
   /**
    * Focuses an element, if it's not focused after the first try,
-   * allows focusing by adjusting tabIndex and retry
+   * allow focusing by adjusting tabIndex and retry
    * @param {HTMLElement} el
    */
   function focusElement(el) {
@@ -188,6 +208,38 @@
 
   }
 
+  // To enable smooth scrolling on hashchange, we need to immediately restore
+  // the scroll pos after a hashchange changed it, so we track it constantly.
+  // Some browsers don't trigger a scroll event before the hashchange,
+  // so to undo, the position from last scroll is the one we need to go back to.
+  // In others (e.g. IE) the scroll listener is triggered again before the
+  // hashchange occurs and the last reported position is already the new one
+  // updated by the hashchange – we need the second last to undo there.
+  // Because of this we don't track just the last, but the last two positions.
+  var lastTwoScrollPos = [];
+
+  /**
+    * Tries to undo the automatic, instant scroll caused by a hashchange
+    * and instead scrolls smoothly to the new hash target
+    */
+  function handleHashChange() {
+    // scroll-behavior not set to smooth or body nor parsed yet? Abort
+    if (!shouldSmoothscroll() || !d.body) return;
+
+    var target = getScrollTarget(location.hash);
+    if (!target) return;
+
+    // If the position last reported by the scroll listener is the same as the
+    // current one caused by a hashchange, go back to second last – else last
+    var currentPos = getScrollTop();
+    var top = lastTwoScrollPos[lastTwoScrollPos[1] === currentPos ? 0 : 1];
+
+    // Undo the scroll caused by the hashchange...
+    w.scroll({ top: top, behavior: 'instant' });
+    // ...and instead smoothscroll to the target
+    triggerSmoothscroll(target);
+  }
+
   /**
    * Returns the scroll offset towards the top
    */
@@ -196,47 +248,24 @@
   }
 
   /**
-   * Tries to undo the automatic, instant scroll caused by a hashchange
-   * and instead scrolls smoothly to the new hash target
+   * Update the last two scroll positions
    */
-  function attachHashchangeListener() {
-    // Some browsers don't trigger a scroll event before the hashchange,
-    // so to undo, the position last reported is the one we need to go back to.
-    // In others (e.g. IE) the scroll listener is triggered before the
-    // hashchange occurs, thus the last reported position is already the new one
-    // updated by the hashchange – we need the second last to undo.
-    var lastTwoScrollPos = [];
-
-    // Keep the scroll positions up to date
-    d.addEventListener('scroll', function () {
-      lastTwoScrollPos[0] = lastTwoScrollPos[1];
-      lastTwoScrollPos[1] = getScrollTop();
-    });
-
-    w.addEventListener("hashchange", function () {
-      // scroll-behavior not set to smooth? Bail out, let browser handle it
-      if (!shouldSmoothscroll()) return;
-
-      var target = getScrollTarget(location.hash);
-      if (!target) return;
-
-      // If the position last reported by the scroll listener is the same as the
-      // current one caused by a hashchange, go back to second last – else last
-      var currentPos = getScrollTop();
-      var top = lastTwoScrollPos[lastTwoScrollPos[1] === currentPos ? 0 : 1];
-
-      // Undo the scroll caused by the hashchange...
-      w.scroll({ top: top, behavior: 'instant' });
-      // ...and instead smoothscroll to the target
-      triggerSmoothscroll(target);
-    });
+  function trackScrollPositions() {
+    if (!d.body) return; // Body not parsed yet? Abort
+    lastTwoScrollPos[0] = lastTwoScrollPos[1];
+    lastTwoScrollPos[1] = getScrollTop();
   }
 
-  // Attach listeners if body is already available, else wait until DOM is ready
-  if (d.body) attachHashchangeListener();
-  else d.addEventListener("DOMContentLoaded", attachHashchangeListener);
-
-  // Register the click handler listening for clicks on anchor links
+  // Register all event handlers
   d.addEventListener('click', handleClick, false);
+  d.addEventListener('scroll', trackScrollPositions);
+  w.addEventListener("hashchange", handleHashChange);
 
-})();
+  // Assign destroy function that unregisters event listeners. Used for testing
+  destroy = function () {
+    d.removeEventListener('click', handleClick, false);
+    d.removeEventListener('scroll', trackScrollPositions);
+    w.removeEventListener('hashchange', handleHashChange);
+  }
+  return destroy;
+});

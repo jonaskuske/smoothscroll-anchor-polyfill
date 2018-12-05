@@ -38,7 +38,7 @@ Because CSS properties unknown to a browser can't efficiently be parsed from Jav
 ```
 
 #### 1b. Using `font-family` as workaround
-You can specify the property as the name of a custom font family, your actual fonts will still work the way they should. Unlike inline styles, this allows you to use normal CSS features like media queries. The following only enables smooth scroll on desktop devices, for example:
+Alternatively, you can specify the property as the name of a custom font family. Your actual fonts will still work the way they should (plus, you can simply declare actual fonts on `body`). Unlike inline styles, this allows you to use normal CSS features like media queries. The following only enables smooth scroll on desktop devices, for example:
 ```html
 <style>
   html {
@@ -56,7 +56,7 @@ You can specify the property as the name of a custom font family, your actual fo
 > This process can also be automated using a [PostCSS plugin](https://github.com/jonaskuske/postcss-smoothscroll-anchor-polyfill), so you can write regular CSS and don't have to bother with font-families. It just works™
 
 ### 2. Install the polyfill
-Because this polyfill only wires up anchor links with the browser's native `window.scroll()` and `element.scrollIntoView()` methods, you'll need to load a polyfill providing smooth scroll to these methods in addition to the steps outlined below.
+Because this polyfill only wires up anchor links to use the browser's native `window.scroll()` and `element.scrollIntoView()` methods, you'll need to load a polyfill providing smooth scroll to these methods in addition to the steps outlined below.
 > [smoothscroll-polyfill](http://iamdustan.com/smoothscroll/) works, but you can just as well use another one or write your own implementation. [Learn More](https://jonaskuske.github.io/smoothscroll-anchor-polyfill#requirements)
 #### 2a. From a CDN
 ```html
@@ -76,6 +76,8 @@ import 'smoothscroll-anchor-polyfill';
 &nbsp;  
 
 ## Full Documentation & Demo
+
+> ⚠ The documentation is not up-to-date as of now, it will be updated  when this packages leaves the beta phase.
 
 The full documentation with advanced installation instructions, known limitations, features like enabling and disabling the smooth scroll and more can be found at
 [**jonaskuske.github.io/smoothscroll-anchor-polyfill**](https://jonaskuske.github.io/smoothscroll-anchor-polyfill).  

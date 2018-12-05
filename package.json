@@ -1,6 +1,6 @@
 {
   "name": "smoothscroll-anchor-polyfill",
-  "version": "0.12.0",
+  "version": "1.0.0-beta",
   "description": "Apply smooth scroll to anchor links to replicate CSS scroll-behavior",
   "main": "dist/index.js",
   "browserslist": [
@@ -10,8 +10,10 @@
     "not dead"
   ],
   "scripts": {
-    "test": "node test.js",
-    "prepublishOnly": "npx terser index.js -m -o dist/index.js"
+    "test": "jest",
+    "minify": "npx terser index.js -m -o dist/index.js --comments",
+    "version": "npx replace '__VERSION__' $npm_package_version dist/index.js",
+    "prepublishOnly": "npm run minify && npm run version"
   },
   "repository": {
     "type": "git",
@@ -20,15 +22,23 @@
   "keywords": [
     "smoothscroll",
     "scrollbehavior",
+    "scroll-behavior",
     "scroll",
     "polyfill",
+    "hashchange",
     "anchor",
-    "link"
+    "link",
+    "smooth"
   ],
   "author": "Jonas Kuske",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/jonaskuske/smoothscroll-anchor-polyfill/issues"
   },
-  "homepage": "https://jonaskuske.github.io/smoothscroll-anchor-polyfill"
+  "homepage": "https://jonaskuske.github.io/smoothscroll-anchor-polyfill",
+  "devDependencies": {
+    "jest": "^23.6.0",
+    "replace": "^1.0.0",
+    "terser": "^3.11.0"
+  }
 }

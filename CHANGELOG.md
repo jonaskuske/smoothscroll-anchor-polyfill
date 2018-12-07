@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
  - The README.md file has been updated to match the API of v1.0.0
  - Fixed 'window is not defined' error in Node environments, important for usage with SSR
- - BREAKING: Polyfill now only handles smooth scroll if scroll-behavior is set to 'smooth' via <html style="">, documentElement.style.scrollBehavior or a custom font-family (more information will be added to the documentation)
+ - BREAKING: Polyfill now only handles smooth scroll if scroll-behavior is set to 'smooth' via &lt;html style="">, documentElement.style.scrollBehavior or a custom font-family (more information will be added to the documentation)
 ### Added
  - Tests for smooth scrolling when clicking anchors have been implemented
  

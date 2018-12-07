@@ -4,30 +4,27 @@
  * (c) 2018 Jonas Kuske
  * Released under the MIT License.
  */
-(function (indexFn) {
-  if (typeof process !== 'undefined' && process.env.NODE_ENV === 'test') {
-    // Test env: export function so it can run multiple times
-    exports.polyfill = indexFn;
+
+(function (global, factory) {
+  var SmoothscrollAnchorPolyfill = factory();
+  if (typeof exports === 'object' && typeof module !== 'undefined') {
+    module.exports = SmoothscrollAnchorPolyfill;
   } else {
-    // Else run immediately, no time to waste!
-    indexFn();
+    global.SmoothscrollAnchorPolyfill = SmoothscrollAnchorPolyfill;
   }
-})(function () {
+
+  // In test environment: abort, else run polyfill immediately
+  if (typeof process !== 'undefined' && process.env.NODE_ENV === 'test') return;
+  else SmoothscrollAnchorPolyfill.polyfill();
+})(this, function () {
 
   /* */
 
-  // Noop to be returned if polyfill returns early. Will be assigned later
-  var destroy = function () { };
-
   // Abort if outside browser (window is undefined in Node etc.)
   var isBrowser = typeof window !== 'undefined';
-  if (!isBrowser) return destroy;
+  if (!isBrowser) return;
 
   var w = window, d = document, docEl = d.documentElement;
-
-  var forcePolyfill = w.__forceSmoothscrollAnchorPolyfill__ === true;
-  // Abort if smoothscroll is natively supported and force flag is not set
-  if (!forcePolyfill && 'scrollBehavior' in docEl.style) return destroy;
 
   // Check if browser supports focus without automatic scrolling (preventScroll)
   var supportsPreventScroll = false;
@@ -75,7 +72,7 @@
    * If a valid CSS property value for scroll-behavior is passed, returns
    * whether it specifies smooth scroll behavior or not, else returns null
    * @param {any} value The value to check
-   * @returns {boolean|undefined}
+   * @returns {?boolean} The specified scroll behavior or null
    */
   function getScrollBehavior(value) {
     var status = null;
@@ -99,10 +96,8 @@
    */
   function isAnchorToLocalElement(el) {
     return (
-      // Is an anchor
-      el.tagName && el.tagName.toLowerCase() === 'a' &&
-      // Targets an element
-      el.href.indexOf('#') > -1 &&
+      // Is an anchor with a fragment in the url
+      el.tagName && el.tagName.toLowerCase() === 'a' && /#/.test(el.href) &&
       // Target is on current page
       el.hostname === location.hostname && el.pathname === location.pathname
     );
@@ -256,16 +251,26 @@
     lastTwoScrollPos[1] = getScrollTop();
   }
 
-  // Register all event handlers
-  d.addEventListener('click', handleClick, false);
-  d.addEventListener('scroll', trackScrollPositions);
-  w.addEventListener("hashchange", handleHashChange);
+  return {
+    /**
+     * Starts the polyfill by attaching the neccessary EventListeners
+     */
+    polyfill: function () {
+      // Abort if smoothscroll is natively supported and force flag is not set
+      var forcePolyfill = w.__forceSmoothscrollAnchorPolyfill__ === true;
+      if (!forcePolyfill && 'scrollBehavior' in docEl.style) return;
 
-  // Assign destroy function that unregisters event listeners. Used for testing
-  destroy = function () {
-    d.removeEventListener('click', handleClick, false);
-    d.removeEventListener('scroll', trackScrollPositions);
-    w.removeEventListener('hashchange', handleHashChange);
-  }
-  return destroy;
+      d.addEventListener('click', handleClick, false);
+      d.addEventListener('scroll', trackScrollPositions);
+      w.addEventListener('hashchange', handleHashChange);
+    },
+    /**
+     * Stops the polyfill by removing all EventListeners
+     */
+    destroy: function () {
+      d.removeEventListener('click', handleClick, false);
+      d.removeEventListener('scroll', trackScrollPositions);
+      w.removeEventListener('hashchange', handleHashChange);
+    }
+  };
 });

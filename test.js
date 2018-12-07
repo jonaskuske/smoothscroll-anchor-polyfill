@@ -1,4 +1,4 @@
-const { polyfill } = require('./index')
+const { polyfill, destroy } = require('./index')
 
 const insertElement = (type, attrs) => {
   const el = document.createElement(type)
@@ -22,7 +22,7 @@ afterEach(() => {
 
   document.documentElement.removeAttribute('style')
   document.body.innerHTML = ''
-  document.head.innerHTML = ''
+  destroy()
 })
 
 describe('General', () => {
@@ -33,11 +33,10 @@ describe('General', () => {
     document.documentElement.style.scrollBehavior = 'smooth'
 
     const spy = jest.spyOn(window, 'scroll')
-    const destroy = polyfill()
+    polyfill()
 
     anchor.click()
     expect(spy).not.toHaveBeenCalled()
-    destroy()
   })
 
 
@@ -50,11 +49,10 @@ describe('General', () => {
     window.__forceSmoothscrollAnchorPolyfill__ = true
 
     const spy = jest.spyOn(window, 'scroll')
-    const destroy = polyfill()
+    polyfill()
 
     anchor.click()
     expect(spy).toHaveBeenCalled()
-    destroy()
   })
 })
 
@@ -66,12 +64,11 @@ describe('Scroll targeting', () => {
     const anchorTwo = insertElement('a', { href: '#' })
 
     const spy = jest.spyOn(window, 'scroll')
-    const destroy = polyfill()
+    polyfill()
 
     anchor.click()
     anchorTwo.click()
     expect(spy).toHaveBeenCalledTimes(2)
-    destroy()
   })
 
   it('Scrolls to targeted element if anchor targets its ID', () => {
@@ -82,12 +79,11 @@ describe('Scroll targeting', () => {
 
     const windowSpy = jest.spyOn(window, 'scroll')
     const spy = jest.spyOn(target, 'scrollIntoView')
-    const destroy = polyfill()
+    polyfill()
 
     anchor.click()
     expect(windowSpy).not.toHaveBeenCalled()
     expect(spy).toHaveBeenCalled()
-    destroy()
   })
 
   it('Scrolls to element instead of top if hash "#top" targets an ID', () => {
@@ -98,12 +94,11 @@ describe('Scroll targeting', () => {
 
     const windowSpy = jest.spyOn(window, 'scroll')
     const spy = jest.spyOn(target, 'scrollIntoView')
-    const destroy = polyfill()
+    polyfill()
 
     anchor.click()
     expect(spy).toHaveBeenCalled()
     expect(windowSpy).not.toHaveBeenCalled()
-    destroy()
   })
 })
 
@@ -115,11 +110,10 @@ describe('Enabling & Toggling the polyfill', () => {
       const anchor = insertElement('a', { href: '#' })
 
       const spy = jest.spyOn(window, 'scroll')
-      const destroy = polyfill()
+      polyfill()
 
       anchor.click()
       expect(spy).toHaveBeenCalled()
-      destroy()
     })
 
     it('Can be enabled through the style attribute on <html>', () => {
@@ -128,18 +122,17 @@ describe('Enabling & Toggling the polyfill', () => {
       const anchor = insertElement('a', { href: '#' })
 
       const spy = jest.spyOn(window, 'scroll')
-      const destroy = polyfill()
+      polyfill()
 
       anchor.click()
       expect(spy).toHaveBeenCalled()
-      destroy()
     })
 
     it('Can be enabled by documentElement.style.scrollBehavior', () => {
       const anchor = insertElement('a', { href: '#' })
 
       const spy = jest.spyOn(window, 'scroll')
-      const destroy = polyfill()
+      polyfill()
 
       // Only set scrollBehavior after the polyfill ran, so it doesn't bail
       // due to checking for native support ('scrollBehavior' in docEl.style)
@@ -147,7 +140,6 @@ describe('Enabling & Toggling the polyfill', () => {
 
       anchor.click()
       expect(spy).toHaveBeenCalled()
-      destroy()
     })
 
     it('Can be disabled through method with higher specificity', () => {
@@ -157,7 +149,7 @@ describe('Enabling & Toggling the polyfill', () => {
       const anchor = insertElement('a', { href: '#' })
 
       const spy = jest.spyOn(window, 'scroll')
-      const destroy = polyfill()
+      polyfill()
 
       anchor.click()
       expect(spy).toHaveBeenCalledTimes(1)
@@ -169,7 +161,6 @@ describe('Enabling & Toggling the polyfill', () => {
       document.documentElement.style.scrollBehavior = 'smooth'
       anchor.click()
       expect(spy).toHaveBeenCalledTimes(2)
-      destroy()
     })
   })
 
@@ -180,21 +171,20 @@ describe('Enabling & Toggling the polyfill', () => {
       const anchor = insertElement('a', { href: '#top' })
 
       const spy = jest.spyOn(window, 'scroll')
-      const destroy = polyfill()
+      polyfill()
 
       anchor.click()
       expect(spy).toHaveBeenCalledTimes(1)
       document.documentElement.style.scrollBehavior = 'auto'
       anchor.click()
       expect(spy).toHaveBeenCalledTimes(1)
-      destroy()
     })
 
     it('Responds to computedStyle of font-family', () => {
       const anchor = insertElement('a', { href: '#top' })
 
       const spy = jest.spyOn(window, 'scroll')
-      const destroy = polyfill()
+      polyfill()
 
       anchor.click()
       expect(spy).toHaveBeenCalledTimes(0)
@@ -204,7 +194,6 @@ describe('Enabling & Toggling the polyfill', () => {
       document.documentElement.style.font = '100 1rem "scroll-behavior:inherit"'
       anchor.click()
       expect(spy).toHaveBeenCalledTimes(1)
-      destroy()
     })
   })
 })

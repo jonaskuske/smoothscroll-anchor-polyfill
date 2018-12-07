@@ -40,7 +40,7 @@ describe('General', () => {
   })
 
 
-  it('Runs even in browsers with native support if force flag is set', () => {
+  it('Runs even with native support if force flag is set on window', () => {
     const anchor = insertElement('a', { href: '#' })
 
     // Mock native support
@@ -50,6 +50,20 @@ describe('General', () => {
 
     const spy = jest.spyOn(window, 'scroll')
     polyfill()
+
+    anchor.click()
+    expect(spy).toHaveBeenCalled()
+  })
+
+    it('Runs even with native support if force flag is passed as arg', () => {
+    const anchor = insertElement('a', { href: '#' })
+
+    // Mock native support
+    document.documentElement.style.scrollBehavior = 'smooth'
+
+    const spy = jest.spyOn(window, 'scroll')
+    // Pass force flag in options object
+    polyfill({ force: true })
 
     anchor.click()
     expect(spy).toHaveBeenCalled()

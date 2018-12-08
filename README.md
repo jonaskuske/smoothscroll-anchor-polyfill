@@ -14,6 +14,13 @@
 &nbsp;  
 &nbsp;  
 
+## Features
+
+ - ✔ Smooth scroll to target when clicking an anchor
+ - ✔ Smooth scroll to target on hashchange (◀/▶ buttons)
+ - ✔ Updates URL with #fragment
+ - ✔ Handles focus
+
 ## Browser support
 ⚠ Requires smooth scroll for `window.scroll()` and `Element.scrollIntoView()` (e.g. [smoothscroll-polyfill](http://iamdustan.com/smoothscroll/)) to work!
 

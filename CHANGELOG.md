@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1] - 2018-12-08
+### Added
+ - Added feature overview to README
+
 ## [1.0.0] - 2018-12-08
 ### Added
  - The methods 'destroy' and 'polyfill' are now exported (CommonJS) or exposed on window.SmoothscrollAnchorPolyfill. The polyfill still runs automatically on load so embedding it is enough, but now you can destroy it if you want (EventListeners are removed) and start it again, later.

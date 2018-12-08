@@ -13,6 +13,7 @@
 
 &nbsp;  
 &nbsp;  
+&nbsp;  
 
 ## Features
 
@@ -20,6 +21,8 @@
  - ✔ Smooth scroll to target on hashchange (◀/▶ buttons)
  - ✔ Updates URL with #fragment
  - ✔ Handles focus
+
+&nbsp;
 
 ## Browser support
 ⚠ Requires smooth scroll for `window.scroll()` and `Element.scrollIntoView()` (e.g. [smoothscroll-polyfill](http://iamdustan.com/smoothscroll/)) to work!
@@ -30,7 +33,7 @@
 
 > \* hashchange navigation triggered by forwards/backwards buttons isn't smooth despite native support. [Learn more](https://jonaskuske.github.io/smoothscroll-anchor-polyfill#hashchange-blink)
 
-&nbsp;  
+&nbsp;
 
 ## Usage
 

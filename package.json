@@ -1,6 +1,6 @@
 {
   "name": "smoothscroll-anchor-polyfill",
-  "version": "1.0.0-beta",
+  "version": "1.1.0",
   "description": "Apply smooth scroll to anchor links to replicate CSS scroll-behavior",
   "main": "dist/index.js",
   "browserslist": [

@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://www.npmjs.com/package/smoothscroll-anchor-polyfill"><img align="center" src="https://img.shields.io/npm/v/smoothscroll-anchor-polyfill.svg" alt="NPM version"></a>
-  <a href="https://travis-ci.org/jonaskuske/smoothscroll-anchor-polyfill"><img align="center" src="https://travis-ci.org/jonaskuske/smoothscroll-anchor-polyfill.svg?branch=dev" alt="Build status"></a>
+  <a href="https://travis-ci.org/jonaskuske/smoothscroll-anchor-polyfill"><img align="center" src="https://travis-ci.org/jonaskuske/smoothscroll-anchor-polyfill.svg?branch=master" alt="Build status"></a>
   <a href="./LICENSE"><img align="center" src="https://img.shields.io/npm/l/smoothscroll-anchor-polyfill.svg" alt="License"></a>
 </p>  
 
@@ -20,14 +20,14 @@
 | --------- | --------- | --------- | --------- | --------- | --------- |
 | IE9+, Edge| native| native*| last 2 versions| last 2 versions| native*  
 
-> \* hashchange navigation triggered by forwards/backwards buttons isn't smooth despite native support. [Learn more](https://jonaskuske.github.io/smoothscroll-anchor-polyfill#hashchange)
+> \* hashchange navigation triggered by forwards/backwards buttons isn't smooth despite native support. [Learn more](https://jonaskuske.github.io/smoothscroll-anchor-polyfill#hashchange-blink)
 
 &nbsp;  
 
 ## Usage
 
 ### 1. Set `scroll-behavior: smooth` in CSS
-> Has to be set global (on `html`), [check the docs for limitations](https://jonaskuske.github.io/smoothscroll-anchor-polyfill#limitations)  
+> Has to be set global (on `html`), [check the docs for limitations](https://jonaskuske.github.io/smoothscroll-anchor-polyfill#global-only)  
 
 Because CSS properties unknown to a browser can't efficiently be parsed from JavaScript, using normal stylesheets is not enough unfortunately. To specify the property in a way the polyfill can read it, you have two options:
 #### 1a. Using inline styles
@@ -57,7 +57,7 @@ Alternatively, you can specify the property as the name of a custom font family.
 
 ### 2. Install the polyfill
 Because this polyfill only wires up anchor links to use the browser's native `window.scroll()` and `element.scrollIntoView()` methods, you'll need to load a polyfill providing smooth scroll to these methods in addition to the steps outlined below.
-> [smoothscroll-polyfill](http://iamdustan.com/smoothscroll/) works, but you can just as well use another one or write your own implementation. [Learn More](https://jonaskuske.github.io/smoothscroll-anchor-polyfill#requirements)
+> [smoothscroll-polyfill](http://iamdustan.com/smoothscroll/) works, but you can just as well use another one or write your own implementation. [Learn More](https://jonaskuske.github.io/smoothscroll-anchor-polyfill#usage)
 #### 2a. From a CDN
 ```html
 <script src="https://unpkg.com/smoothscroll-anchor-polyfill"></script>
@@ -79,7 +79,7 @@ import 'smoothscroll-anchor-polyfill';
 
 > ⚠ The documentation is not up-to-date as of now, it will be updated  when this packages leaves the beta phase.
 
-The full documentation with advanced installation instructions, known limitations, features like enabling and disabling the smooth scroll and more can be found at
+The full documentation with advanced installation instructions, limitations, features like enabling and disabling the smooth scrolling and more can be found at
 [**jonaskuske.github.io/smoothscroll-anchor-polyfill**](https://jonaskuske.github.io/smoothscroll-anchor-polyfill).  
 The documentation site itself is built as a smooth scrolling one-page design, utilizing this polyfill.
 

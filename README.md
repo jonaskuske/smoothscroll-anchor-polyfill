@@ -2,6 +2,7 @@
   <a href="https://www.npmjs.com/package/smoothscroll-anchor-polyfill"><img align="center" src="https://img.shields.io/npm/v/smoothscroll-anchor-polyfill.svg" alt="NPM version"></a>
   <a href="https://travis-ci.org/jonaskuske/smoothscroll-anchor-polyfill"><img align="center" src="https://travis-ci.org/jonaskuske/smoothscroll-anchor-polyfill.svg?branch=master" alt="Build status"></a>
   <a href="./LICENSE"><img align="center" src="https://img.shields.io/npm/l/smoothscroll-anchor-polyfill.svg" alt="License"></a>
+  <a href="https://jonaskuske.github.io/smoothscroll-anchor-polyfill"><img align="center" src="https://img.shields.io/badge/documentation-up--to--date-blue.svg" alt="Documentation"></a>
 </p>  
 
 &nbsp;  
@@ -76,8 +77,6 @@ import 'smoothscroll-anchor-polyfill';
 &nbsp;  
 
 ## Full Documentation & Demo
-
-> ⚠ The documentation is not up-to-date as of now, it will be updated  when this packages leaves the beta phase.
 
 The full documentation with advanced installation instructions, limitations, features like enabling and disabling the smooth scrolling and more can be found at
 [**jonaskuske.github.io/smoothscroll-anchor-polyfill**](https://jonaskuske.github.io/smoothscroll-anchor-polyfill).  

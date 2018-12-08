@@ -202,6 +202,7 @@ footer>div.row p {
 
 h1[id] span, h2[id] span, h3[id] span, h4[id] span {
   position: relative;
+  display: inline-block;
   transition: padding 200ms ease-out;
   cursor: pointer;
 }
@@ -210,8 +211,8 @@ h1[id] span::before, h2[id] span::before, h3[id] span::before, h4[id] span::befo
   content: "#";
   position: absolute;
   left: 0;
-  bottom: 0%;
-  transform: translateX(-50%);
+  top: 50%;
+  transform: translate(-50%, -50%);
   opacity: 0;
   transition: opacity 0.3s ease-out;
 }

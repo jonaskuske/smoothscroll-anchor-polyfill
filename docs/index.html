@@ -268,8 +268,8 @@ if (!('scrollBehavior') in document.documentElement.style) {
             <p>If you used <code>destroy()</code> to disable the polyfill,
               you can re-enable it with this method. It takes an (optional)
               Object as argument, the property <code>force</code> behaves
-              the same way as the <a href="#force-flag">global force flag</a>
-              on <code>window</code>.</p>
+              like the <a href="#force-flag">global force flag</a>, but
+              overrides it if both are set.</p>
           </div>
         </div>
         <p>⚠ Note that both the global force flag and
@@ -281,9 +281,7 @@ if (!('scrollBehavior') in document.documentElement.style) {
           if you encounter this problem.</p>
         <h3 id="limitations"><span>Limitations</span></h3>
         <h4 id="no-regular-stylesheets"><span><code>scroll-behavior</code> is
-            not
-            detected in regular
-            stylesheets</span></h4>
+            not detected in regular stylesheets</span></h4>
         <p>As already explained in the <a href="#usage">Usage</a> section,
           <code>scroll-behavior</code>
           can not be set in regular CSS, as accessing the property there

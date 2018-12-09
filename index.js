@@ -1,3 +1,5 @@
+// @ts-check
+
 /**
  * @license
  * smoothscroll-anchor-polyfill __VERSION__
@@ -5,26 +7,70 @@
  * Released under the MIT License.
  */
 
-(function(global, factory) {
-    var SmoothscrollAnchorPolyfill = factory();
+(function(global, Factory) {
+    var SmoothscrollAnchorPolyfill = new Factory();
     if (typeof exports === 'object' && typeof module !== 'undefined') {
         module.exports = SmoothscrollAnchorPolyfill;
     } else {
         global.SmoothscrollAnchorPolyfill = SmoothscrollAnchorPolyfill;
     }
+    SmoothscrollAnchorPolyfill.polyfill();
+})(this, function SmoothscrollAnchorPolyfill() {
 
-    // In test environment: abort, else run polyfill immediately
-    if (typeof process !== 'undefined' && process.env.NODE_ENV === 'test') return;
-    else SmoothscrollAnchorPolyfill.polyfill();
-})(this, function() {
+    /**
+     * Workaround for type check :(
+     * @typedef {{__forceSmoothscrollAnchorPolyfill__: [boolean]}} GlobalFlag
+     * @typedef {Window & GlobalFlag} ExtendedWindow
+     */
 
-    /* */
+    var instance = this, isBrowser = typeof window !== 'undefined';
 
-    // Abort if outside browser (window is undefined in Node etc.)
-    var isBrowser = typeof window !== 'undefined';
+    if (isBrowser) {
+        /** @type {ExtendedWindow} */
+        var w = (window), d = document, docEl = d.documentElement;
+    }
+
+    /**
+     * Starts the polyfill by attaching the neccessary EventListeners
+     *
+     * Aborts, if ('scrollBehavior' in documentElement.style) and the force flag
+     * isn't set on the options parameter Object or globally on window
+     * @param {PolyfillOptions} [opts] Options for invoking
+     * @returns {SmoothscrollAnchorPolyfill} Polyfill Instance, allows for chaining
+     *
+     * @typedef {Object} PolyfillOptions
+     * @prop {boolean} [force] Enable despite native support, overrides global flag
+     */
+    this.polyfill = function(opts) {
+        opts = opts || {};
+        if (isBrowser) {
+            var globalFlag = w.__forceSmoothscrollAnchorPolyfill__;
+            var force = typeof opts.force === 'boolean' ? opts.force : globalFlag;
+
+            // Abort if smoothscroll has native support and force flag isn't set
+            if ('scrollBehavior' in docEl.style && !force) return instance;
+
+            d.addEventListener('click', handleClick, false);
+            d.addEventListener('scroll', trackScrollPositions);
+            w.addEventListener('hashchange', handleHashChange);
+        }
+        return instance;
+    };
+
+    /**
+     * Stops the polyfill by removing all EventListeners
+     * @returns {SmoothscrollAnchorPolyfill} Polyfill Instance, allows for chaining
+     */
+    this.destroy = function() {
+        if (isBrowser) {
+            d.removeEventListener('click', handleClick, false);
+            d.removeEventListener('scroll', trackScrollPositions);
+            w.removeEventListener('hashchange', handleHashChange);
+        }
+        return instance;
+    };
+
     if (!isBrowser) return;
-
-    var w = window, d = document, docEl = d.documentElement;
 
     // Check if browser supports focus without automatic scrolling (preventScroll)
     var supportsPreventScroll = false;
@@ -50,7 +96,7 @@
     function shouldSmoothscroll() {
         // Values to check for set scroll-behavior in order of priority/specificity
         var valuesToCheck = [
-            // Priority 1: behavior specified as inline property
+            // Priority 1: behavior assigned to style property
             // Allows toggling smoothscroll from JS (docEl.style.scrollBehavior = ...)
             docEl.style.scrollBehavior,
             // Priority 2: behavior specified inline in style attribute
@@ -83,21 +129,23 @@
 
     /**
      * Get the target element of an event
-     * @param {event} evt
+     * @param {Event} evt
+     * @returns {HTMLElement}
      */
     function getEventTarget(evt) {
         evt = evt || w.event;
-        return evt.target || evt.srcElement;
+        return /** @type {HTMLElement} */ (evt.target || evt.srcElement);
     }
 
     /**
      * Check if an element is an anchor pointing to a target on the current page
-     * @param {HTMLElement} el
+     * @param {HTMLAnchorElement} el
+     * @returns {boolean}
      */
     function isAnchorToLocalElement(el) {
         return (
             // Is an anchor with a fragment in the url
-            el.tagName && el.tagName.toLowerCase() === 'a' && /#/.test(el.href) &&
+            el.tagName.toLowerCase() === 'a' && /#/.test(el.href) &&
             // Target is on current page
             el.hostname === location.hostname && el.pathname === location.pathname
         );
@@ -135,15 +183,15 @@
     }
 
     /**
-     * Walks up the DOM starting from a given element until an element satisfies the validate function
+     * Walks up the DOM starting from "element" until an element satisfies "validate()"
      * @param {HTMLElement} element The element from where to start validating
-     * @param {Function} validate The validation function
-     * @returns {HTMLElement|boolean}
+     * @param {function} validate Validation function, receives current element as arg
+     * @returns {?HTMLElement} The found element or null
      */
     function findInParents(element, validate) {
         if (validate(element)) return element;
-        if (element.parentNode) return findInParents(element.parentNode, validate);
-        return false;
+        if (element.parentElement) return findInParents(element.parentElement, validate);
+        return null;
     }
 
     // Stores the setTimeout id of pending focus changes, allows aborting them
@@ -174,7 +222,7 @@
      * Check if the clicked target is an anchor pointing to a local element,
      * if so prevent the default behavior and handle the scrolling using the
      * native JavaScript scroll APIs so smoothscroll polyfills apply
-     * @param {event} evt
+     * @param {MouseEvent} evt
      */
     function handleClick(evt) {
         // Abort if shift/ctrl-click or not primary click (button !== 0)
@@ -183,7 +231,9 @@
         if (!shouldSmoothscroll()) return;
 
         // Check the DOM from the click target upwards if a local anchor was clicked
-        var anchor = findInParents(getEventTarget(evt), isAnchorToLocalElement);
+        var anchor = /** @type {?HTMLAnchorElement} */ (
+            findInParents(getEventTarget(evt), isAnchorToLocalElement)
+        );
         if (!anchor) return;
 
         // Find the element targeted by the hash
@@ -200,7 +250,6 @@
             // Append the hash to the URL
             if (history.pushState) history.pushState(null, d.title, (hash || '#'));
         }
-
     }
 
     // To enable smooth scrolling on hashchange, we need to immediately restore
@@ -218,8 +267,8 @@
       * and instead scrolls smoothly to the new hash target
       */
     function handleHashChange() {
-        // scroll-behavior not set to smooth or body nor parsed yet? Abort
-        if (!shouldSmoothscroll() || !d.body) return;
+        // scroll-behavior not set to smooth or body not parsed yet? Abort
+        if (!d.body || !shouldSmoothscroll()) return;
 
         var target = getScrollTarget(location.hash);
         if (!target) return;
@@ -229,7 +278,11 @@
         var currentPos = getScrollTop();
         var top = lastTwoScrollPos[lastTwoScrollPos[1] === currentPos ? 0 : 1];
 
+        // @ts-ignore
         // Undo the scroll caused by the hashchange...
+        // Using {behavior: 'instant'} even though it's not in the spec anymore as
+        // Blink & Gecko support it – once an engine with native support doesn't,
+        // we need to disable scroll-behavior during scroll reset, then restore
         w.scroll({ top: top, behavior: 'instant' });
         // ...and instead smoothscroll to the target
         triggerSmoothscroll(target);
@@ -250,32 +303,4 @@
         lastTwoScrollPos[0] = lastTwoScrollPos[1];
         lastTwoScrollPos[1] = getScrollTop();
     }
-
-    return {
-        /**
-         * Starts the polyfill by attaching the neccessary EventListeners
-         *
-         * Aborts, if ('scrollBehavior' in documentElement.style) and the force flag
-         * isn't set on the options parameter Object or globally on window
-         * @param {{force: boolean}} opts Enable polyfill despite native support
-         */
-        polyfill: function(opts) {
-            opts = opts || {};
-            // Abort if smoothscroll is natively supported and force flag is not set
-            var forcePolyfill = opts.force || w.__forceSmoothscrollAnchorPolyfill__;
-            if (!forcePolyfill && 'scrollBehavior' in docEl.style) return;
-
-            d.addEventListener('click', handleClick, false);
-            d.addEventListener('scroll', trackScrollPositions);
-            w.addEventListener('hashchange', handleHashChange);
-        },
-        /**
-         * Stops the polyfill by removing all EventListeners
-         */
-        destroy: function() {
-            d.removeEventListener('click', handleClick, false);
-            d.removeEventListener('scroll', trackScrollPositions);
-            w.removeEventListener('hashchange', handleHashChange);
-        }
-    };
 });

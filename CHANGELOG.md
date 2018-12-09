@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2018-12-10
+### Added
+ - `destroy()` and `polyfill()` now return the polyfill instance so you can chain them
+ - Tests for Node environment (→ SSR), `destroy()`, `polyfill()` and `{ force }` override
+ - Improved JSDoc typing for better IntelliSense completion
+ - Entry `"unpkg"` in `package.json`, points at minified version so CDN serves smaller file 
+### Changed
+ - You can now override `window.__forceSmoothscrollAnchorPolyfill__` with the `{ force: boolean }` argument of `polyfill()`
+ - Package entry (`"main"`) now points to unminified file so typing hints are kept 
+ - Explain usage of `{ behavior: 'instant' }` (not in spec anymore) + outline alternative
+### Fixed
+ - (Regression) Prevent 'window is not defined' error in Node environments
+
 ## [1.0.1] - 2018-12-08
 ### Added
  - Added feature overview to README

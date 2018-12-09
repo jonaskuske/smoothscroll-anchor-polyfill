@@ -70,7 +70,7 @@ section, .fullscreen {
   margin-top: 13rem;
 }
 
-.scroll-btn {
+.scroll-btn-spacer {
   margin-top: 7rem;
 }
 
@@ -78,7 +78,7 @@ section, .fullscreen {
   .fullscreen h1 {
     margin-top: 18rem;
   }
-  .scroll-btn {
+  .scroll-btn-spacer {
     margin-top: 12rem;
   }
 }
@@ -87,12 +87,12 @@ section, .fullscreen {
   .fullscreen h1 {
     margin-top: 30rem;
   }
-  .scroll-btn {
+  .scroll-btn-spacer {
     margin-top: 24rem;
   }
 }
 
-html:not(.smooth-scroll) .scroll-btn {
+html:not(.smooth-scroll) #scroll-btn button {
   font-weight: lighter;
 }
 
@@ -225,8 +225,18 @@ h1[id] span:hover::before, h2[id] span:hover::before, h3[id] span:hover::before,
   opacity: 0.5;
 }
 
-.allow-overflow {
-  overflow: auto;
+@media screen and (max-width: 517px) {
+  .allow-overflow:not(.w-450) {
+    overflow-y: hidden;
+    display: block;
+  }
+}
+
+@media screen and (max-width: 450px) {
+  .allow-overflow.w-450 {
+    overflow-y: hidden;
+    display: block;
+  }
 }
 
 /* Add invisible padding to top of targetable elements,

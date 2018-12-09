@@ -50,7 +50,9 @@
           <p class="max-width">⚓ Apply smooth scroll to anchor links to
             replicate CSS <code>scroll-behavior</code></p>
           <div><a class="button button-outline" href="https://github.com/jonaskuske/smoothscroll-anchor-polyfill">GitHub</a></div>
-          <button class="scroll-btn">Toggle smooth scroll</button>
+          <div class="scroll-btn-spacer">
+            <div id="scroll-btn"><button>Toggle smooth scroll</button></div>
+          </div>
         </div>
       </div>
 
@@ -58,18 +60,13 @@
         <h2 id="start"><span>Start</span></h2>
         <p>The <a href="https://drafts.csswg.org/cssom-view/#propdef-scroll-behavior"><b>Scroll
               Behavior</b></a> specification allows for
-          native smooth
-          scrolling
-          in browsers
-          – both by using JavaScript scroll APIs like <code>window.scrollTo</code>
-          and
-          <code>Element.scrollIntoView</code> or by simply setting the
-          property
-          <code>scroll-behavior</code> to <code>smooth</code> in CSS, which
-          will then make any scrolling <b>smooth by default</b>. This includes
-          scrolls
-          that are triggered by an anchor link pointing to an element on the
-          page by targeting it's <code>id</code> in the hash, like <code>&lt;a href="#target"></code>.<br>
+          native smooth scrolling in browsers – both by using JavaScript scroll
+          APIs like <code>window.scrollTo</code> and <code>Element.scrollIntoView</code>
+          or by simply setting the property <code>scroll-behavior</code> to
+          <code>smooth</code> in CSS, which will then make any scrolling <b>smooth
+            by default</b>. This includes scrolls that are triggered by an
+          anchor link pointing to an element on the page by targeting it's
+          <code>id</code> in the hash, like <code>&lt;a href="#target"></code>.<br>
           By using this CSS property, you can build a one-page design with
           smooth scroll between the different sections without having to write
           a single line of JS – just like this page is doing!
@@ -93,17 +90,21 @@
         <p>⚠ Since this script uses the JavaScript scroll APIs and relies on
           their smooth scroll functionality to operate, you'll need a
           polyfill for the Scroll Behavior spec in order for this script to
-          make a difference. <a href="http://iamdustan.com/smoothscroll/"><code>smoothscroll-polyfill</code></a>
+          make a difference. It just wires up <code>&lt;a></code> tags and
+          <code>hashchange</code> events to use <code>window.scroll()</code>
+          and <code>Element.scrollIntoView()</code>. <a href="http://iamdustan.com/smoothscroll/"><code>smoothscroll-polyfill</code></a>
           is used as example throughout this site, but you may just as well use
-          another polyfill – or write your own implementation.</p>
+          another polyfill – or write your own implementation. If you are using
+          jQuery on your site, you could use <code>$.animate()</code> to
+          provide smooth scroll for these scroll APIs, for example.</p>
         <h3 id="usage-css"><span>1. Setting <code>scroll-behavior</code> in CSS</span></h3>
-        <p>Because browsers don't parse CSS properties they don't recognize.
+        <p>Browsers don't parse CSS properties they don't recognize.
           For this reason, reading the <code>scroll-behavior</code> property
           from your regular stylesheets is unfortunately not possible (without
           a performance hit). Instead, specify <code>scroll-behavior</code>
           using one of these options:</p>
-        <h4 id="inline-styles"><span>Option 1: Using the inline style attribute</span></h4>
-        <p>Simply define <code>scroll-behaviour</code> as an inline style on
+        <h4 id="inline-style"><span>Option 1: Using the inline style attribute</span></h4>
+        <p>Simply define <code>scroll-behavior</code> as an inline style on
           the <code>html</code> element:</p>
         <pre><code>&lt;html style="scroll-behavior: smooth;">
 ...
@@ -119,10 +120,10 @@
           font family:
           <pre><code>&lt;style>
   html {
-    /* Normal CSS properties for browsers with native support */
+    /* Normal CSS property for browsers with native support */
     scroll-behavior: smooth;
 
-    /* Additionally defined as the name of a font, so the polyfill can read it */
+    /* Defined as the name of a font, so the polyfill can read it */
     font-family: "scroll-behavior: smooth", sans-serif;
   }
 &lt;style></code></pre>
@@ -137,6 +138,7 @@
     scroll-behavior: auto;
     font-family: "scroll-behavior: auto";
   }
+
   @media screen and (min-width: 1150px) {
     html {
       scroll-behavior: smooth;
@@ -152,7 +154,7 @@
         <h3 id="install"><span>2. Installing the polyfill</span></h3>
         <h4 id="install-script"><span>Option 1: Using &lt;script></span></h4>
         <p>Simply drop in <code>&lt;script></code> tags linking to the
-          polyfills and you're good to go.</p>
+          polyfill(s) and you're good to go.</p>
         <label for="html-usage">In the HTML document's &lt;head>:</label>
         <pre><code id="html-usage">&lt;!-- Any polyfill to enable smoothscroll for the JavaScript APIs -->
 &lt;script src="https://unpkg.com/smoothscroll-polyfill/dist/smoothscroll.min.js">&lt;/script>
@@ -205,32 +207,34 @@ if (!('scrollBehavior') in document.documentElement.style) {
         <p>For 90% of use cases, there should not be much more to it than
           loading this polyfill – it will
           execute immediately no matter if loaded through a script tag or in a
-          CommonJS environment. If the Scroll Behavior spec is supported
+          module environment. If the Scroll Behavior spec is supported
           natively, the code won't do anything.</p>
         <h3 id="changing-behavior"><span>Changing the scroll behavior</span></h3>
         <p>The prefered way to dynamically adjust the scroll behavior is the <a
-            href="#font-family">font-family workaround</a>. This way you can
+            href="#font-family"><code>font-family</code> workaround</a>. This
+          way you can
           simply toggle a CSS class on <code>&lt;html></code> depending on the
-          behavior you want. Valid property values are <code>smooth</code> for
+          behavior you want. The documentation site is using this method: click
+          the <a href="#scroll-btn">"Toggle smooth scroll" button</a> and
+          notice how the class <code>smooth-scroll</code> is toggled on <code>&lt;html></code>.</p>
+        <p>Valid property values are <code>smooth</code> for
           enabling smooth scroll and <code>auto</code>, <code>initial</code>,
           <code>inherit</code> or <code>unset</code> for enabling instant,
           jumping scroll.</p>
-        <div class="allow-overflow">
-          <p>You can also assign these values directly to <code>document.documentElement.style.scrollBehavior</code>,
+        <div>
+          <p>You can also assign these values directly to <span class="allow-overflow"><code>document.documentElement.style.scrollBehavior</code></span>,
             it will have precedence over both the inline style attribute and
-            the
-            property set using the font-family workaround.</p>
+            the property set using the font-family workaround.<br>
+            ⚠ Assigning to <code>.scrollBehavior</code> is <b>not recommened</b>
+            however as this property is used for feature detection. Assigning a
+            value to it before a polyfill was loaded <b>will break this one and
+              most other polyfills</b> related to smooth scrolling. ⚠</p>
         </div>
-        <p>
-          ⚠ Assigning to <code>.scrollBehavior</code> is not recommened
-          however as this property is used for feature detection. Assigning to
-          it before a polyfill was loaded <b>will break this one and most other
-            polyfills</b> related to smooth scrolling. ⚠</p>
         <h3 id="force-flag"><span>Using the polyfill even if there is native
             support</span></h3>
         <div class="row row-wrap">
-          <div class="column column-40" style="flex-grow:1;max-width:100%;overflow:auto;">
-            <code>window.__forceSmoothscrollAnchorPolyfill__</code>:
+          <div class="column column-40" style="flex-grow:1;max-width:100%;">
+            <span class="allow-overflow w-450"><code>window.__forceSmoothscrollAnchorPolyfill__</code></span>:
           </div>
           <div class="column column-60" style="flex-grow:1;max-width:100%;">
             <p>If this is set to <code>true</code>, anchor navigation
@@ -239,13 +243,13 @@ if (!('scrollBehavior') in document.documentElement.style) {
           </div>
         </div>
         <h3 id="methods"><span>Methods: <code>destroy</code> and <code>polyfill</code></span></h3>
-        <div class="allow-overflow">
+        <div>
           <p>This package exports two methods, <code>destroy</code> and <code>polyfill</code>.
             If loaded through a script tag, these methods are exposed on
-            <code>window.smoothscrollAnchorPolyfill</code>.</p>
+            <span class="allow-overflow"><code>window.smoothscrollAnchorPolyfill</code></span>.</p>
         </div>
         <div class="row row-wrap">
-          <div class="column column-33 allow-overflow" style="flex-grow:1;max-width:100%;">
+          <div class="column column-33" style="flex-grow:1;max-width:100%;">
             <code>destroy()</code>:
           </div>
           <div class="column column-66" style="flex-grow:1;max-width:100%;">
@@ -266,15 +270,12 @@ if (!('scrollBehavior') in document.documentElement.style) {
               on <code>window</code>.</p>
           </div>
         </div>
-        <p class="allow-overflow">⚠ Note that both the global force flag
-          and the
-          check for native
-          support (<code>'scrollBehavior' in document.documentElement.style</code>)
+        <p>⚠ Note that both the global force flag and
+          the check for native support (<span class="allow-overflow"><code>'scrollBehavior' in document.documentElement.style</code></span>)
           will be re-evaluated when <code>polyfill()</code> runs. If you
-          assigned to <code>.scrollBehavior</code> in the
-          meantime, this check will evaluate to <code>true</code> and the
-          polyfill won't enable itself.
-          Use the force flag or run <code>delete document.documentElement.style.scrollBehavior;</code>
+          assigned to <code>.scrollBehavior</code> in the meantime, this check
+          will evaluate to <code>true</code> and the polyfill won't enable
+          itself. Use the force flag or run <span class="allow-overflow"><code>delete document.documentElement.style.scrollBehavior;</code></span>
           if you encounter this problem.</p>
         <h3 id="limitations"><span>Limitations</span></h3>
         <h4 id="no-regular-stylesheets"><span><code>scroll-behavior</code> is
@@ -287,8 +288,8 @@ if (!('scrollBehavior') in document.documentElement.style) {
           from JavaScript is not possible without a performance hit. This
           is caused by browsers not parsing a CSS property if it isn't
           recognized as valid. If you need the flexiblity of CSS, consider
-          the <code>font-family</code>
-          workaround.</p>
+          the <a href="#font-family"><code>font-family</code>
+            workaround</a>.</p>
         <h4 id="global-only"><span><code>scroll-behavior</code> is only
             supported
             as global setting</span></h4>
@@ -299,6 +300,12 @@ if (!('scrollBehavior') in document.documentElement.style) {
           allow for that, either all anchors on the page scroll smoothly by
           setting <code>scroll-behavior</code>
           at document level, or none.</p>
+        <h4 id="no-javascript-scroll"><code>scroll-behavior</code> doesn't
+          affect scrolling triggered from JavaScript</h4>
+        <p>This polyfill only affects scrolling triggered by clicks on <code>&lt;a></code>
+          tags and through <code>hashchange</code> events. You'll still have to
+          pass <code>{ behavior: 'smooth' }</code> when using APIs like <code>window.scroll()</code>
+          unless your polyfill for these APIs has it's own CSS property check.</p>
         <h4 id="hashchange-blink"><span>Scrolling triggered by <code>hashchange</code>
             is not smooth in Chrome</span></h4>
         <p>This actually doesn't have anything to do with this polyfill –
@@ -334,8 +341,8 @@ if (!('scrollBehavior') in document.documentElement.style) {
           reason, it is not implemented (yet) in this polyfill.<br>
           However, it is relatively safe to assume that <code>prefers-reduced-motion</code>
           will disable <code>scroll-behavior: smooth</code> so this can
-          absolutely be discussed – please file an issue on GitHub if it
-          affects your project.</p>
+          absolutely be discussed – please file an <a href="https://github.com/jonaskuske/smoothscroll-anchor-polyfill/issues">issue
+            on GitHub</a> if it affects your project.</p>
       </section>
       <!--  -->
       <!-- Way too big legal section  -->
@@ -566,7 +573,7 @@ if (!('scrollBehavior') in document.documentElement.style) {
       // Update URL when clicking on title without triggering navigation
       Array.prototype.slice.call(document.querySelectorAll('h1[id],h2[id],h3[id],h4[id]')).forEach(function (a) { a.addEventListener('click', function () { var b = a.id; if (null !== b && b !== void 0) { var c = location.href; 0 < c.indexOf('#') ? c = c.replace(/#.*$/, '#' + b) : c += '#' + b, history.replaceState(null, document.title, c) } }) });
       // Flexbox feature detect & Button for toggling smoothscroll
-      !(function (d) { ('alignItems' in d.documentElement.style) && (d.documentElement.className += " flex-center"); d.querySelector('.scroll-btn').addEventListener('click', function () { d.documentElement.classList.toggle('smooth-scroll') }) })(document)
+      !(function (d) { ('alignItems' in d.documentElement.style) && (d.documentElement.className += " flex-center"); d.querySelector('#scroll-btn button').addEventListener('click', function () { d.documentElement.classList.toggle('smooth-scroll') }) })(document)
     </script>
   </body>
 

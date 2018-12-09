@@ -9,9 +9,9 @@
     <script>
       // Some Polyfills for Internet Explorer 9, needed for this page
       // Super cheap requestAnimationFrame polyfill
-      'requestAnimationFrame' in window || (window.requestAnimationFrame = function (a) { setTimeout(a, 0) });
+      'requestAnimationFrame' in window || (window.requestAnimationFrame = function(a) { setTimeout(a, 0) });
       // Element.classList polyfill
-      ; (function () { function a(e) { this.element = e } var b = function (e) { return e.replace(/^\s+|\s+$/g, '') }, c = function (e) { return new RegExp('(^|\\s+)' + e + '(\\s+|$)') }, d = function (e, f, g) { for (var h = 0; h < e.length; h++)f.call(g, e[h]) }; a.prototype = { add: function add() { d(arguments, function (e) { this.contains(e) || (this.element.className = b(this.element.className + ' ' + e)) }, this) }, remove: function remove() { d(arguments, function (e) { this.element.className = b(this.element.className.replace(c(e), ' ')) }, this) }, toggle: function toggle(e) { return this.contains(e) ? (this.remove(e), !1) : (this.add(e), !0) }, contains: function contains(e) { return c(e).test(this.element.className) }, item: function item(e) { return this.element.className.split(/\s+/)[e] || null }, replace: function replace(e, f) { this.remove(e), this.add(f) } }, 'classList' in Element.prototype || Object.defineProperty(Element.prototype, 'classList', { get: function get() { return new a(this) } }), window.DOMTokenList && !DOMTokenList.prototype.replace && (DOMTokenList.prototype.replace = a.prototype.replace) })();
+      !(function() { function a(e) { this.element = e } var b = function(e) { return e.replace(/^\s+|\s+$/g, '') }, c = function(e) { return new RegExp('(^|\\s+)' + e + '(\\s+|$)') }, d = function(e, f, g) { for (var h = 0; h < e.length; h++)f.call(g, e[h]) }; a.prototype = { add: function add() { d(arguments, function(e) { this.contains(e) || (this.element.className = b(this.element.className + ' ' + e)) }, this) }, remove: function remove() { d(arguments, function(e) { this.element.className = b(this.element.className.replace(c(e), ' ')) }, this) }, toggle: function toggle(e) { return this.contains(e) ? (this.remove(e), !1) : (this.add(e), !0) }, contains: function contains(e) { return c(e).test(this.element.className) }, item: function item(e) { return this.element.className.split(/\s+/)[e] || null }, replace: function replace(e, f) { this.remove(e), this.add(f) } }, 'classList' in Element.prototype || Object.defineProperty(Element.prototype, 'classList', { get: function get() { return new a(this) } }), window.DOMTokenList && !DOMTokenList.prototype.replace && (DOMTokenList.prototype.replace = a.prototype.replace) })();
     </script>
     <!-- Use any polyfill for the smoothscroll JavaScript API -->
     <script src="https://unpkg.com/smoothscroll-polyfill/dist/smoothscroll.min.js"></script>
@@ -25,7 +25,7 @@
 
     <script>
       // Hide header after scroll (mobile only)
-      document.addEventListener('DOMContentLoaded', function () { var a = document, b = a.body, c = b.classList, e = a.documentElement.scrollTop || b.scrollTop; a.addEventListener('scroll', function () { var f = a.documentElement.scrollTop || b.scrollTop, g = f - e; 25 > Math.abs(g) || (0 < g ? c.add('hide-header') : c.remove('hide-header'), e = f) }, !1) });
+      document.addEventListener('DOMContentLoaded', function() { var a = document, b = a.body, c = b.classList, e = a.documentElement.scrollTop || b.scrollTop; a.addEventListener('scroll', function() { var f = a.documentElement.scrollTop || b.scrollTop, g = f - e; 25 > Math.abs(g) || (0 < g ? c.add('hide-header') : c.remove('hide-header'), e = f) }, !1) });
     </script>
   </head>
 
@@ -247,6 +247,8 @@ if (!('scrollBehavior') in document.documentElement.style) {
           <p>This package exports two methods, <code>destroy</code> and <code>polyfill</code>.
             If loaded through a script tag, these methods are exposed on
             <span class="allow-overflow"><code>window.smoothscrollAnchorPolyfill</code></span>.</p>
+          <p>Both methods return the polyfill instance so you can chain them
+            (e.g. <code>.destroy().polyfill()</code> to restart the script).</p>
         </div>
         <div class="row row-wrap">
           <div class="column column-33" style="flex-grow:1;max-width:100%;">
@@ -571,9 +573,9 @@ if (!('scrollBehavior') in document.documentElement.style) {
 
     <script>
       // Update URL when clicking on title without triggering navigation
-      Array.prototype.slice.call(document.querySelectorAll('h1[id],h2[id],h3[id],h4[id]')).forEach(function (a) { a.addEventListener('click', function () { var b = a.id; if (null !== b && b !== void 0) { var c = location.href; 0 < c.indexOf('#') ? c = c.replace(/#.*$/, '#' + b) : c += '#' + b, history.replaceState(null, document.title, c) } }) });
+      Array.prototype.slice.call(document.querySelectorAll('h1[id],h2[id],h3[id],h4[id]')).forEach(function(a) { a.addEventListener('click', function() { var b = a.id; if (null !== b && b !== void 0) { var c = location.href; 0 < c.indexOf('#') ? c = c.replace(/#.*$/, '#' + b) : c += '#' + b, history.replaceState(null, document.title, c) } }) });
       // Flexbox feature detect & Button for toggling smoothscroll
-      !(function (d) { ('alignItems' in d.documentElement.style) && (d.documentElement.className += " flex-center"); d.querySelector('#scroll-btn button').addEventListener('click', function () { d.documentElement.classList.toggle('smooth-scroll') }) })(document)
+      !(function(d) { ('alignItems' in d.documentElement.style) && (d.documentElement.className += " flex-center"); d.querySelector('#scroll-btn button').addEventListener('click', function() { d.documentElement.classList.toggle('smooth-scroll') }) })(document)
     </script>
   </body>
 

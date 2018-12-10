@@ -4,11 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.1.3] - unknown
+## [1.1.3] - 2018-12-10
 ### Changed
  - Updated README to include bundle size and SSR-compatibility as features
+ - Minor improvements to JSDoc typings
 ### Fixed
- - Automatically prefix `anchor.pathname` with leading slash if it's missing in `isAnchorToLocalElement()`, fixes flickering in IE9 (caused by clicks being handled by `handleHashchange()` instead of `handleClick` due to click handler not detecting the anchor) 
+ - Automatically prefix `anchor.pathname` with leading slash if it's missing in `isAnchorToLocalElement()`, fixes flickering in IE9 (caused by clicks being handled by `handleHashchange()` instead of `handleClick` due to click handler not detecting the anchor)
+ - Use correct property value in `font-family` example in README 
 
 ## [1.1.2] - 2018-12-10
 ### Fixed

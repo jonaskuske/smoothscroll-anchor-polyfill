@@ -15,18 +15,16 @@
         global.SmoothscrollAnchorPolyfill = SmoothscrollAnchorPolyfill;
     }
     SmoothscrollAnchorPolyfill.polyfill();
-})(this, function SmoothscrollAnchorPolyfill() {
-
-    /**
-     * Workaround for type check :(
-     * @typedef {{__forceSmoothscrollAnchorPolyfill__: [boolean]}} GlobalFlag
-     * @typedef {Window & GlobalFlag} ExtendedWindow
-     */
+})(this, /** @constructor */ function SmoothscrollAnchorPolyfill() {
 
     var instance = this, isBrowser = typeof window !== 'undefined';
 
     if (isBrowser) {
-        /** @type {ExtendedWindow} */
+        /**
+         * Add flag to Window interface, workaround for type check
+         * @typedef {{__forceSmoothscrollAnchorPolyfill__: [boolean]}} GlobalFlag
+         * @typedef {Window & GlobalFlag} WindowWithFlag
+         * @type {WindowWithFlag} */
         var w = (window), d = document, docEl = d.documentElement;
     }
 
@@ -143,11 +141,16 @@
      * @returns {boolean}
      */
     function isAnchorToLocalElement(el) {
+        // Check if element is an anchor with a fragment in the url
+        if (!/^a$/i.test(el.tagName) || !/#/.test(el.href)) return false;
+
+        // Fix bug in IE9 where anchor.pathname misses leading slash
+        var anchorPath = el.pathname;
+        if (anchorPath[0] !== '/') anchorPath = '/' + anchorPath;
+
+        // Check if anchor targets an element on the current page
         return (
-            // Is an anchor with a fragment in the url
-            el.tagName.toLowerCase() === 'a' && /#/.test(el.href) &&
-            // Target is on current page
-            el.hostname === location.hostname && el.pathname === location.pathname
+            el.hostname === location.hostname && anchorPath === location.pathname
         );
     }
 

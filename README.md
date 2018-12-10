@@ -20,12 +20,15 @@
  - ✔ Smooth scroll to target when clicking an anchor
  - ✔ Smooth scroll to target on hashchange (◀/▶ buttons)
  - ✔ Updates URL with #fragment
- - ✔ Handles focus
+ - ✔ Handles focus for improved accessibility
+ - ✔ Doesn't break server-side rendering
+ - ✔ 1.2KB gzipped
+
+⚠ Requires smooth scroll for `window.scroll()` and `Element.scrollIntoView()` (e.g. [smoothscroll-polyfill](http://iamdustan.com/smoothscroll/)) to work!
 
 &nbsp;
 
 ## Browser support
-⚠ Requires smooth scroll for `window.scroll()` and `Element.scrollIntoView()` (e.g. [smoothscroll-polyfill](http://iamdustan.com/smoothscroll/)) to work!
 
 | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/edge/edge_48x48.png" alt="IE / Edge" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>IE / Edge | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png" alt="Firefox" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Firefox | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png" alt="Chrome" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Chrome | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari/safari_48x48.png" alt="Safari" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Safari | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari-ios/safari-ios_48x48.png" alt="iOS Safari" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>iOS Safari | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/opera/opera_48x48.png" alt="Opera" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Opera |
 | --------- | --------- | --------- | --------- | --------- | --------- |
@@ -53,9 +56,10 @@ Alternatively, you can specify the property as the name of a custom font family.
 ```html
 <style>
   html {
-    scroll-behavior: instant;
-    font-family: 'scroll-behavior: instant;', 'Roboto', sans-serif;
+    scroll-behavior: auto;
+    font-family: 'scroll-behavior: auto;', 'Roboto', sans-serif;
   }
+
   @media screen and (min-width: 1150px) {
     html {
       scroll-behavior: smooth;

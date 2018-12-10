@@ -56,9 +56,10 @@ Alternatively, you can specify the property as the name of a custom font family.
 ```html
 <style>
   html {
-    scroll-behavior: instant;
-    font-family: 'scroll-behavior: instant;', 'Roboto', sans-serif;
+    scroll-behavior: auto;
+    font-family: 'scroll-behavior: auto;', 'Roboto', sans-serif;
   }
+
   @media screen and (min-width: 1150px) {
     html {
       scroll-behavior: smooth;

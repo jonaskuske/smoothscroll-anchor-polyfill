@@ -325,8 +325,8 @@ if (!('scrollBehavior') in document.documentElement.style) {
         <h3 id="faq"><span>FAQ</span></h3>
         <h4 id="ssr"><span>Will this break Server Side Rendering?</span></h4>
         <p>No.</p>
-        <h4 id="event-delegation"><span>Polyfill anchors dynamically inserted
-            later</span></h4>
+        <h4 id="event-delegation"><span>Will this work if anchors are inserted
+            after the script was loaded?</span></h4>
         <p>The polyfill uses <a href="https://javascript.info/event-delegation">Event
             Delegation</a> to detect clicks,
           so even if an anchor is added to the page after the polyfill was

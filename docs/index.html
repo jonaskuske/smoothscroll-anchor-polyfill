@@ -293,8 +293,7 @@ if (!('scrollBehavior') in document.documentElement.style) {
           the <a href="#font-family"><code>font-family</code>
             workaround</a>.</p>
         <h4 id="global-only"><span><code>scroll-behavior</code> is only
-            supported
-            as global setting</span></h4>
+            supported as global setting</span></h4>
         <p>In browsers with native support, you can define <code>scroll-behavior</code>
           at multiple points in your document, e.g. <code>auto</code> on
           the document itself, but <code>smooth</code> on a slideshow
@@ -302,14 +301,19 @@ if (!('scrollBehavior') in document.documentElement.style) {
           allow for that, either all anchors on the page scroll smoothly by
           setting <code>scroll-behavior</code>
           at document level, or none.</p>
-        <h4 id="no-javascript-scroll"><code>scroll-behavior</code> doesn't
-          affect scrolling triggered from JavaScript</h4>
+        <h4 id="no-javascript-scroll"><span><code>scroll-behavior</code>
+            doesn't affect scrolling triggered from JavaScript</span></h4>
         <p>This polyfill only affects scrolling triggered by clicks on <code>&lt;a></code>
           tags and through <code>hashchange</code> events. You'll still have to
           pass <code>{ behavior: 'smooth' }</code> when using APIs like <code>window.scroll()</code>
           unless your polyfill for these APIs has it's own CSS property check.</p>
         <h4 id="native-inconsistencies"><span>Inconsistencies in native
             implementations</span></h4>
+        <p>While Scroll Behavior has native support in a couple of browsers
+          already, they behave differently than expected in some situations.
+          The following are not bugs of this polyfill, but inconsistencies of
+          browsers' native behavior and workarounds you might want to know
+          about.</p>
         <p><b>Blink (e.g. Chrome, Opera):</b><br>
           While 'normal' scrolling is smooth, if you click a couple of links
           and then navigate back and forth using the browser's

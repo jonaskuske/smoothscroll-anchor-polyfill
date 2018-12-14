@@ -38,7 +38,7 @@
           <li><a class="button" href="#docs">Docs</a></li>
           <li><a class="button" href="#legal">Legal</a></li>
           <li></li>
-          <li><a href="#top">⬆ to Top</a></li>
+          <li><a href="#">⬆ to Top</a></li>
         </ul>
       </nav>
     </header>
@@ -306,22 +306,22 @@ if (!('scrollBehavior') in document.documentElement.style) {
           tags and through <code>hashchange</code> events. You'll still have to
           pass <code>{ behavior: 'smooth' }</code> when using APIs like <code>window.scroll()</code>
           unless your polyfill for these APIs has it's own CSS property check.</p>
-        <h4 id="hashchange-blink"><span>Scrolling triggered by <code>hashchange</code>
-            is not smooth in Chrome</span></h4>
-        <p>This actually doesn't have anything to do with this polyfill –
-          it's a limitation of Blink's native implementation (so it affects
-          other Blink-based browsers like Opera, too). While 'normal'
-          scrolling is smooth, if you click a couple of links and then
-          navigate back and forth using the browser's forwards/backwards
-          buttons (which triggers a <code>hashchange</code>
+        <h4 id="native-inconsistencies"><span>Inconsistencies in native
+            implementations</span></h4>
+        <p><b>Blink (e.g. Chrome, Opera):</b><br>
+          While 'normal' scrolling is smooth, if you click a couple of links
+          and then navigate back and forth using the browser's
+          forwards/backwards buttons (which triggers a <code>hashchange</code>
           everytime), it jumps from anchor to anchor instead of scrolling
-          smoothly. If this is important to you, you can fix it by
-          detecting the Blink engine and force-enabling this polyfill. Load
-          <a href="https://github.com/isocroft/browsengine">browsengine.js</a>,
+          smoothly.<br>If this is important to you, you can fix it by detecting
+          the Blink engine and force-enabling this polyfill. Load <a href="https://github.com/isocroft/browsengine">browsengine.js</a>,
           then do (<i>before</i> the polyfill runs):</p>
-        <pre><code>if (window.webpage.engine.blink) {
-  window.__forceSmoothscrollAnchorPolyfill__ = true;
+          <pre><code>if (window.webpage.engine.blink) {
+          window.__forceSmoothscrollAnchorPolyfill__ = true;
 }</code></pre>
+        <p><b>Gecko (Firefox):</b><br>
+          <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=279629#c27">Anchors pointing to <code>#top</code> don't smooth scroll.</a> Use
+          anchors pointing at <code>#</code> for an easy fix.</p>
         <h3 id="faq"><span>FAQ</span></h3>
         <h4 id="ssr"><span>Will this break Server Side Rendering?</span></h4>
         <p>No.</p>

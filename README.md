@@ -34,7 +34,7 @@
 | --------- | --------- | --------- | --------- | --------- | --------- |
 | IE9+, Edge| native| native*| last 2 versions| last 2 versions| native*  
 
-> \* hashchange navigation triggered by forwards/backwards buttons isn't smooth despite native support. [Learn more](https://jonaskuske.github.io/smoothscroll-anchor-polyfill#hashchange-blink)
+> \* hashchange navigation triggered by forwards/backwards buttons isn't smooth despite native support. [Learn more](https://jonaskuske.github.io/smoothscroll-anchor-polyfill#native-inconsistencies)
 
 &nbsp;
 

@@ -176,6 +176,8 @@ import smoothscrollAnchorPolyfill from 'smoothscroll-anchor-polyfill';
 // (Unlike this package, smoothscroll-polyfill needs to be actively invoked: )
 smoothscrollPolyfill.polyfill();
 </code></pre>
+          <p>👉🏻 The polyfill is also provided in ES module format as <code>index.mjs</code>
+            and <code>index.min.mjs</code>.</p>
           <h3 id="code-splitting"><span>Advanced installation (with Code
               Splitting)</span></h3>
           <p>If you're using a build system with support for code splitting
@@ -316,11 +318,12 @@ if (!('scrollBehavior') in document.documentElement.style) {
           smoothly.<br>If this is important to you, you can fix it by detecting
           the Blink engine and force-enabling this polyfill. Load <a href="https://github.com/isocroft/browsengine">browsengine.js</a>,
           then do (<i>before</i> the polyfill runs):</p>
-          <pre><code>if (window.webpage.engine.blink) {
+        <pre><code>if (window.webpage.engine.blink) {
           window.__forceSmoothscrollAnchorPolyfill__ = true;
 }</code></pre>
         <p><b>Gecko (Firefox):</b><br>
-          <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=279629#c27">Anchors pointing to <code>#top</code> don't smooth scroll.</a> Use
+          <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=279629#c27">Anchors
+            pointing to <code>#top</code> don't smooth scroll.</a> Use
           anchors pointing at <code>#</code> for an easy fix.</p>
         <h3 id="faq"><span>FAQ</span></h3>
         <h4 id="ssr"><span>Will this break Server Side Rendering?</span></h4>

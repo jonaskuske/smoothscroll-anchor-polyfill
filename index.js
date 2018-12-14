@@ -9,7 +9,8 @@
 
 (function(global, Factory) {
     var SmoothscrollAnchorPolyfill = new Factory();
-    if (typeof exports === 'object' && typeof module !== 'undefined') {
+    var isESModule = typeof global !== 'undefined' && global.__ESM_MOCK__;
+    if (!isESModule && typeof exports === 'object' && typeof module !== 'undefined') {
         module.exports = SmoothscrollAnchorPolyfill;
     } else {
         global.SmoothscrollAnchorPolyfill = SmoothscrollAnchorPolyfill;

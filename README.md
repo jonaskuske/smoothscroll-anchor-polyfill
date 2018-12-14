@@ -34,7 +34,7 @@
 | --------- | --------- | --------- | --------- | --------- | --------- |
 | IE9+, Edge| native| native*| last 2 versions| last 2 versions| native*  
 
-> \* hashchange navigation triggered by forwards/backwards buttons isn't smooth despite native support. [Learn more](https://jonaskuske.github.io/smoothscroll-anchor-polyfill#hashchange-blink)
+> \* hashchange navigation triggered by forwards/backwards buttons isn't smooth despite native support. [Learn more](https://jonaskuske.github.io/smoothscroll-anchor-polyfill#native-inconsistencies)
 
 &nbsp;
 
@@ -68,7 +68,7 @@ Alternatively, you can specify the property as the name of a custom font family.
   }
 </style>
 ```
-> This process can also be automated using a [PostCSS plugin](https://github.com/jonaskuske/postcss-smoothscroll-anchor-polyfill), so you can write regular CSS and don't have to bother with font-families. It just works™
+> This process can be automated using a [PostCSS plugin](https://github.com/jonaskuske/postcss-smoothscroll-anchor-polyfill), so you can write regular CSS and don't have to bother with font-families. It just works™
 
 ### 2. Install the polyfill
 Because this polyfill only wires up anchor links to use the browser's native `window.scroll()` and `element.scrollIntoView()` methods, you'll need to load a polyfill providing smooth scroll to these methods in addition to the steps outlined below.

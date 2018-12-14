@@ -1,3 +1,16 @@
+.smooth-scroll {
+  scroll-behavior: smooth;
+  /* Additionally specified in custom font-family so polyfill can parse it */
+  font-family: 'scroll-behavior:smooth';
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .smooth-scroll {
+    scroll-behavior: auto;
+    font-family: "scroll-behavior: auto";
+  }
+}
+
 body {
   margin: 0;
   font-family: 'Roboto', 'Helvetica Neue', 'Helvetica', 'Arial', 'Segoe UI Emoji', 'Apple Color Emoji', 'Noto Color Emoji', sans-serif;
@@ -58,12 +71,6 @@ header, section, .fullscreen {
 
 section, .fullscreen {
   padding-top: 5rem;
-}
-
-.smooth-scroll {
-  scroll-behavior: smooth;
-  /* Additionally specified in custom font-family so polyfill can parse it */
-  font-family: 'scroll-behavior:smooth';
 }
 
 .fullscreen h1 {

@@ -133,6 +133,23 @@ describe('Scroll targeting', () => {
     expect(spy).toHaveBeenCalled()
   })
 
+  it('Supports (URL-encoded) special characters in the hash', () => {
+    document.documentElement.setAttribute('style', 'scroll-behavior:smooth')
+
+    const specialCharacters = 'emöji―💕'
+
+    // hash automatically encoded to #em%C3%B6ji%E2%80%95%F0%9F%92%95
+    const anchor = insertElement('a', { href: `#${specialCharacters}` })
+    const target = insertElement('div', { id: specialCharacters })
+
+    const spy = jest.spyOn(target, 'scrollIntoView')
+    polyfill()
+
+    anchor.click()
+    expect(spy).toHaveBeenCalled()
+    expect(location.hash).toMatch(`#${encodeURIComponent(specialCharacters)}`)
+  })
+
   it('Scrolls to element instead of top if hash "#top" targets an ID', () => {
     document.documentElement.setAttribute('style', 'scroll-behavior:smooth')
 

@@ -176,6 +176,7 @@
      */
     function getScrollTarget(hash) {
         if (typeof hash !== 'string') return null;
+        hash = decodeHash(hash);
 
         // Retrieve target if an id is specified in the hash, otherwise use body.
         // If hash is "#top" and no target with id "top" was found, also use body
@@ -183,6 +184,18 @@
         var target = hash ? d.getElementById(hash.slice(1)) : d.body;
         if (hash === '#top' && !target) target = d.body;
         return target;
+    }
+
+    /**
+     * Takes a URL-encoded hash and returns the decoded version.
+     * @param {string} hash Hash to decode
+     */
+    function decodeHash(hash) {
+        try {
+            // "#%F0%9F%91%8D%F0%9F%8F%BB" -> "#👍🏻"
+            hash = decodeURIComponent(hash);
+        } catch (e) { /* */ }
+        return hash;
     }
 
     /**

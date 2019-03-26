@@ -11,12 +11,12 @@ const originalCode = fs.readFileSync(
 // We provide an Object as thisArg and tell the script to bind
 // to it (even if run in CommonJS env) through a special property.
 // Then we export the polyfill now bound to the provided Object.
-const esmCode = `const esmMock = { __ESM_MOCK__: true };
+const esmCode = `const rootObj = { __sap_ES_MODULE__: true };
 (function() {
   ${originalCode}
-}).call(esmMock);
+}).call(rootObj);
 
-const { SmoothscrollAnchorPolyfill } = esmMock;
+const { SmoothscrollAnchorPolyfill } = rootObj;
 const { destroy, polyfill } = SmoothscrollAnchorPolyfill;
 
 export { destroy, polyfill };

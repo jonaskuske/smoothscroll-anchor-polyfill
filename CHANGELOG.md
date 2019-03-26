@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0-beta.0] - 2019-03-26
+### Added
+ - The CSS custom property `--scroll-behavior` can now be used to adjust scroll behavior. The `font-family` workaround still works for supporting legacy browsers that don't implement CSS variables
+ - Now usable as UMD module with `define()` syntax
+### Fixed
+ - After focusing a scroll target, the outline is only forcefully removed if it wasn't set by the user
+
 ## [1.2.0] - 2018-12-14
 ### Added
  - ES Module versions are now provided as `index.mjs` and `index.min.mjs`!

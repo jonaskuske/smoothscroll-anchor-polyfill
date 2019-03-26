@@ -1,12 +1,15 @@
 .smooth-scroll {
   scroll-behavior: smooth;
-  /* Additionally specified in custom font-family so polyfill can parse it */
+  /* Specify in custom property so polyfill can parse it */
+  --scroll-behavior: smooth;
+  /* Additionally specified in custom font-family for IE and other old browsers */
   font-family: 'scroll-behavior:smooth';
 }
 
 @media (prefers-reduced-motion: reduce) {
   .smooth-scroll {
     scroll-behavior: auto;
+    --scroll-behavior: auto;
     font-family: "scroll-behavior: auto";
   }
 }

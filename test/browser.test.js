@@ -1,6 +1,10 @@
 const SmoothscrollAnchorPolyfill = require('../index')
 const { polyfill, destroy } = SmoothscrollAnchorPolyfill
 
+// Dummy used to control whether env is treated as env with native support
+const dummy = document.createElement('a')
+const mockNativeSupport = () => dummy.style.scrollBehavior = ''
+
 const insertElement = (type, attrs) => {
   const el = document.createElement(type)
   if (attrs) Object.entries(attrs).forEach(([name, value]) => {
@@ -10,7 +14,7 @@ const insertElement = (type, attrs) => {
   return el
 }
 
-beforeAll(destroy); // Undo auto-execution of polyfill on load
+beforeAll(() => destroy({ _dummy: dummy }));
 beforeEach(() => {
   window.scroll = f => f
   Element.prototype.scrollIntoView = f => f
@@ -19,6 +23,7 @@ afterEach(() => {
   delete window.scroll
   delete Element.prototype.scrollIntoView
   delete document.documentElement.style.scrollBehavior
+  delete dummy.style.scrollBehavior
   delete document.documentElement.style.font
   delete window.__forceSmoothscrollAnchorPolyfill__
 
@@ -29,10 +34,10 @@ afterEach(() => {
 
 describe('General', () => {
   it('Bails out if scrollBehavior is natively supported', () => {
+    document.documentElement.setAttribute('style', 'scroll-behavior:smooth')
     const anchor = insertElement('a', { href: '#' })
 
-    // Mock native support
-    document.documentElement.style.scrollBehavior = 'smooth'
+    mockNativeSupport()
 
     const spy = jest.spyOn(window, 'scroll')
     polyfill()
@@ -49,11 +54,10 @@ describe('General', () => {
   })
 
   it('Runs even with native support if force flag is set on window', () => {
+    document.documentElement.setAttribute('style', 'scroll-behavior:smooth')
     const anchor = insertElement('a', { href: '#' })
 
-    // Mock native support
-    document.documentElement.style.scrollBehavior = 'smooth'
-    // Set force flag
+    mockNativeSupport()
     window.__forceSmoothscrollAnchorPolyfill__ = true
 
     const spy = jest.spyOn(window, 'scroll')
@@ -64,10 +68,10 @@ describe('General', () => {
   })
 
   it('Runs even with native support if force flag is passed as arg', () => {
+    document.documentElement.setAttribute('style', 'scroll-behavior:smooth')
     const anchor = insertElement('a', { href: '#' })
 
-    // Mock native support
-    document.documentElement.style.scrollBehavior = 'smooth'
+    mockNativeSupport()
 
     const spy = jest.spyOn(window, 'scroll')
     // Pass force flag in options object
@@ -78,10 +82,10 @@ describe('General', () => {
   })
 
   it('Allows force flag passed as arg to override global force flag', () => {
+    document.documentElement.setAttribute('style', 'scroll-behavior:smooth')
     const anchor = insertElement('a', { href: '#' })
 
-    // Mock native support
-    document.documentElement.style.scrollBehavior = 'smooth'
+    mockNativeSupport()
     // Force-enable polyfill with global flag
     window.__forceSmoothscrollAnchorPolyfill__ = true
 
@@ -192,14 +196,11 @@ describe('Ways to enable/disable', () => {
   })
 
   it('Can be enabled by documentElement.style.scrollBehavior', () => {
+    document.documentElement.style.scrollBehavior = 'smooth'
     const anchor = insertElement('a', { href: '#' })
 
     const spy = jest.spyOn(window, 'scroll')
     polyfill()
-
-    // Only set scrollBehavior after the polyfill ran, so it doesn't bail
-    // due to checking for native support ('scrollBehavior' in docEl.style)
-    document.documentElement.style.scrollBehavior = 'smooth'
 
     anchor.click()
     expect(spy).toHaveBeenCalled()

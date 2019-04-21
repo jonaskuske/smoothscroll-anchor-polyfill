@@ -40,6 +40,9 @@
 
 ## Usage
 
+> 💡 If you only support modern browsers and can ignore IE, the upcoming [version 1.3.0](https://github.com/jonaskuske/smoothscroll-anchor-polyfill/tree/v1.3.0) will allow you to use a CSS variable (`--scroll-behavior: smooth`) in additon to the following options. You can install it as [`smoothscroll-anchor-polyfill@next`](https://unpkg.com/smoothscroll-anchor-polyfill@next
+) already. 
+
 ### 1. Set `scroll-behavior: smooth` in CSS
 > Has to be set global (on `html`), [check the docs for limitations](https://jonaskuske.github.io/smoothscroll-anchor-polyfill#global-only)  
 
@@ -105,4 +108,4 @@ ___
   
   &nbsp;  
   
-© 2018, Jonas Kuske
+© 2019, Jonas Kuske

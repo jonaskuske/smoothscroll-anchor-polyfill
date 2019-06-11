@@ -7,7 +7,7 @@
  * Released under the MIT License.
  */
 
-(function(root, factory) {
+(function(/** @type {any} */ root, factory) {
   var isESModule = root && root.__sap_ES_MODULE__
   // @ts-ignore
   if (!isESModule && typeof define === 'function' && define.amd) define([], factory);

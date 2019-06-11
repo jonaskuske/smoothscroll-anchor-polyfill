@@ -1,11 +1,8 @@
 // @ts-check
 
-/**
- * @license
- * smoothscroll-anchor-polyfill __VERSION__
- * (c) 2019 Jonas Kuske
- * Released under the MIT License.
- */
+/** @license MIT smoothscroll-anchor-polyfill __VERSION__ (c) 2019 Jonas Kuske */
+
+var _DEBUG_ = true; // removed during minification
 
 (function(/** @type {any} */ root, factory) {
   var isESModule = root && root.__sap_ES_MODULE__
@@ -66,7 +63,7 @@
       opts = opts || {};
       // For testing purposes only: support injection of external dummy element
       // Allows controlling whether env is treated as env with native support
-      if (opts._dummy) dummy = opts._dummy;
+      if (_DEBUG_ && opts._dummy) dummy = opts._dummy;
 
       if (isBrowser) {
         d.removeEventListener('click', handleClick, false);
@@ -104,7 +101,6 @@
       var valuesToCheck = [
         // Priority 1: behavior assigned to style property
         // Allows toggling smoothscroll from JS (docEl.style.scrollBehavior = ...)
-        // @deprecated
         docEl.style.scrollBehavior,
         // Priority 2: behavior specified inline in style attribute
         (extractValue.exec(docEl.getAttribute('style')) || [])[1],

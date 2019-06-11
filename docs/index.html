@@ -49,7 +49,9 @@
           <h1>smoothscroll-anchor-polyfill</h1>
           <p class="max-width">⚓ Apply smooth scroll to anchor links to
             replicate CSS <code>scroll-behavior</code></p>
-          <div><a class="button button-outline" href="https://github.com/jonaskuske/smoothscroll-anchor-polyfill">GitHub</a></div>
+          <div><a class="button button-outline"
+              href="https://github.com/jonaskuske/smoothscroll-anchor-polyfill">GitHub</a>
+          </div>
           <div class="scroll-btn-spacer">
             <div id="scroll-btn"><button>Toggle smooth scroll</button></div>
           </div>
@@ -61,12 +63,15 @@
         <p>The <a href="https://drafts.csswg.org/cssom-view/#propdef-scroll-behavior"><b>Scroll
               Behavior</b></a> specification allows for
           native smooth scrolling in browsers – both by using JavaScript scroll
-          APIs like <code>window.scrollTo</code> and <code>Element.scrollIntoView</code>
+          APIs like <code>window.scrollTo</code> and
+          <code>Element.scrollIntoView</code>
           or by simply setting the property <code>scroll-behavior</code> to
-          <code>smooth</code> in CSS, which will then make any scrolling <b>smooth
+          <code>smooth</code> in CSS, which will then make any scrolling
+          <b>smooth
             by default</b>. This includes scrolls that are triggered by an
           anchor link pointing to an element on the page by targeting it's
-          <code>id</code> in the hash, like <code>&lt;a href="#target"></code>.<br>
+          <code>id</code> in the hash, like
+          <code>&lt;a href="#target"></code>.<br>
           By using this CSS property, you can build a one-page design with
           smooth scroll between the different sections without having to write
           a single line of JS – just like this page is doing!
@@ -92,20 +97,51 @@
           polyfill for the Scroll Behavior spec in order for this script to
           make a difference. It just wires up <code>&lt;a></code> tags and
           <code>hashchange</code> events to use <code>window.scroll()</code>
-          and <code>Element.scrollIntoView()</code>. <a href="http://iamdustan.com/smoothscroll/"><code>smoothscroll-polyfill</code></a>
+          and <code>Element.scrollIntoView()</code>. <a
+            href="http://iamdustan.com/smoothscroll/"><code>smoothscroll-polyfill</code></a>
           is used as example throughout this site, but you may just as well use
           another polyfill – or write your own implementation. If you are using
           jQuery on your site, you could use <code>$.animate()</code> to
           provide smooth scroll for these scroll APIs, for example.</p>
-        <h3 id="usage-css"><span>1. Setting <code>scroll-behavior</code> in CSS</span></h3>
+        <h3 id="usage-css"><span>1. Setting <code>scroll-behavior</code> in
+            CSS</span></h3>
         <p>Browsers don't parse CSS properties they don't recognize.
           For this reason, reading the <code>scroll-behavior</code> property
           from your regular stylesheets is unfortunately not possible (without
-          a performance hit). Instead, specify <code>scroll-behavior</code>
-          using one of these options:</p>
-        <h4 id="inline-style"><span>Option 1: Using the inline style attribute</span></h4>
-        <p>Simply define <code>scroll-behavior</code> as an inline style on
-          the <code>html</code> element:</p>
+          a performance hit). Instead, you need to additionally specify <code>scroll-behavior</code>
+          using a <b>CSS variable</b>:</p>
+
+          <pre><code>&lt;style>
+  html {
+    /* CSS custom property for the polyfill */
+    --scroll-behavior: smooth;
+
+    /* Normal CSS property for browsers with native support */
+    scroll-behavior: smooth;
+  }
+&lt;style></code></pre>
+
+<p>You can treat it like any other property, for example use media queries or toggle classes.<br>
+  The following only enables smooth scroll on Desktop devices:</p>
+
+          <pre><code>&lt;style>
+  html {
+    --scroll-behavior: auto;
+    scroll-behavior: auto;
+  }
+
+  @media screen and (min-width: 1150px) {
+    html {
+      --scroll-behavior: smooth;
+      scroll-behavior: smooth;
+    }
+  }
+&lt;style></code></pre>
+
+          <h4 id="legacy-browsers"><span>Need to support Internet Explorer?</span></h4>
+          <p>In legacy browsers like Internet Explorer, <a href="https://caniuse.com/#feat=css-variables">CSS Custom Properties are not supported</a>. To specify <code>scroll-behavior</code>, use one of the following options instead:</p>
+
+        <p><b>Using the inline <code>style</code> attribute:</b></p>
         <pre><code>&lt;html style="scroll-behavior: smooth;">
 ...
 &lt;/html>
@@ -114,10 +150,11 @@
           property using <code>getAttribute('style')</code> even if the browser
           doesn't parse it.</p>
 
-        <h4 id="font-family"><span>Option 2: Using <code>font-family</code> as
-            workaround</span></h4>
+        <p><b>Using <code>font-family</code> as workaround</b></p>
         <p>Alternatively, you can specify the property as the name of a custom
-          font family:
+          font family. Your actual fonts will still work the way they should (plus, you can
+          simply declare actual fonts on <code>body</code> instead of <code>html</code>).<br>
+          As with CSS variables (and unlike inline styles), this allows you to use normal CSS features like media queries or classes.
           <pre><code>&lt;style>
   html {
     /* Normal CSS property for browsers with native support */
@@ -127,29 +164,12 @@
     font-family: "scroll-behavior: smooth", sans-serif;
   }
 &lt;style></code></pre>
-          Your actual fonts will still work the way they should – plus, you can
-          simply declare actual fonts on <code>body { }</code> and use font
-          styles on <code>html { }</code> exclusively for the means of this
-          polyfill, which is prefered. Unlike inline styles, this allows you to
-          use normal CSS features like media queries or classes. The following
-          only enables smooth scroll on desktop devices, for example:</p>
-        <pre><code>&lt;style>
-  html {
-    scroll-behavior: auto;
-    font-family: "scroll-behavior: auto";
-  }
+<br>
+        <p>💡 Redeclaring your <code>scroll-behavior</code> properties to work with this polyfill can be <b>automated</b> using a <a
+            href="https://github.com/jonaskuske/postcss-smoothscroll-anchor-polyfill"><b>PostCSS
+              plugin</b></a>. You simply write regular CSS and the plugin will intelligently transform it using one of the above options, depending on your supported browsers (detected via <a href="https://github.com/browserslist/browserslist">browserslist</a>). It just works™</p>
 
-  @media screen and (min-width: 1150px) {
-    html {
-      scroll-behavior: smooth;
-      font-family: "scroll-behavior: smooth";
-    }
-  }
-&lt;style></code></pre>
-        <p>💡 Redeclaring your <code>scroll-behavior</code> properties as font
-          names can be automated using a <a href="https://github.com/jonaskuske/postcss-smoothscroll-anchor-polyfill"><b>PostCSS
-              plugin</b></a>, so you can write regular CSS and don't have to
-          bother with font-families. It just works™</p>
+              <br>
 
         <h3 id="install"><span>2. Installing the polyfill</span></h3>
         <h4 id="install-script"><span>Option 1: Using &lt;script></span></h4>
@@ -176,13 +196,15 @@ import smoothscrollAnchorPolyfill from 'smoothscroll-anchor-polyfill';
 // (Unlike this package, smoothscroll-polyfill needs to be actively invoked: )
 smoothscrollPolyfill.polyfill();
 </code></pre>
-          <p>👉🏻 The polyfill is also provided in ES module format as <code>index.mjs</code>
+          <p>👉🏻 The polyfill is also provided in ES module format as
+            <code>index.mjs</code>
             and <code>index.min.mjs</code>.</p>
           <h3 id="code-splitting"><span>Advanced installation (with Code
               Splitting)</span></h3>
           <p>If you're using a build system with support for code splitting
             like
-            <a href="https://parceljs.org/">Parcel</a> or <a href="https://webpack.js.org/">Webpack</a>,
+            <a href="https://parceljs.org/">Parcel</a> or <a
+              href="https://webpack.js.org/">Webpack</a>,
             you can use dynamic imports to load the polyfills – this way,
             browsers won't even download the polyfill code if they already have
             support for the Scroll Behavior spec natively:</p>
@@ -211,76 +233,47 @@ if (!('scrollBehavior') in document.documentElement.style) {
           execute immediately no matter if loaded through a script tag or in a
           module environment. If the Scroll Behavior spec is supported
           natively, the code won't do anything.</p>
-        <h3 id="changing-behavior"><span>Changing the scroll behavior</span></h3>
-        <p>The prefered way to dynamically adjust the scroll behavior is the <a
-            href="#font-family"><code>font-family</code> workaround</a>. This
-          way you can
-          simply toggle a CSS class on <code>&lt;html></code> depending on the
-          behavior you want. The documentation site is using this method: click
+        <h3 id="changing-behavior"><span>Changing the scroll behavior</span>
+        </h3>
+        <p>The prefered way to dynamically adjust the scroll behavior is through CSS, e.g. toggling a class or using a media query. The documentation site is using this method: click
           the <a href="#scroll-btn">"Toggle smooth scroll" button</a> and
-          notice how the class <code>smooth-scroll</code> is toggled on <code>&lt;html></code>.</p>
-        <p>Valid property values are <code>smooth</code> for
-          enabling smooth scroll and <code>auto</code>, <code>initial</code>,
-          <code>inherit</code> or <code>unset</code> for enabling instant,
-          jumping scroll.</p>
+          notice how the class <code>smooth-scroll</code> is toggled on
+          <code>&lt;html></code>.</p>
+        <p>Valid property values for <code>scroll-behavior</code> are <code>smooth</code> to
+          enable smooth scroll, or <code>auto</code>, <code>initial</code>,
+          <code>inherit</code> or <code>unset</code> to use instant, jumping scroll.</p>
         <div>
-          <p>You can also assign these values directly to <span class="allow-overflow"><code>document.documentElement.style.scrollBehavior</code></span>,
-            it will have precedence over both the inline style attribute and
-            the property set using the font-family workaround.<br>
-            ⚠ Assigning to <code>.scrollBehavior</code> is <b>not recommened</b>
-            however as this property is used for feature detection. Assigning a
-            value to it before a polyfill was loaded <b>will break this one and
-              most other polyfills</b> related to smooth scrolling. ⚠</p>
+          <p>You can also assign these values directly to <span
+              class="allow-overflow"><code>document.documentElement.style.scrollBehavior</code></span>,
+            it will have precedence over all other ways of specyfing the scroll behavior.<br>
+            Assigning to <code>.scrollBehavior</code> is <b>not recommened</b>
+            however, as some packages use this property for feature detection and can break if you mess with it.</p>
         </div>
         <h3 id="force-flag"><span>Using the polyfill even if there is native
             support</span></h3>
-        <div class="row row-wrap">
-          <div class="column column-40" style="flex-grow:1;max-width:100%;">
-            <span class="allow-overflow w-450"><code>window.__forceSmoothscrollAnchorPolyfill__</code></span>:
-          </div>
-          <div class="column column-60" style="flex-grow:1;max-width:100%;">
-            <p>If this is set to <code>true</code>, anchor navigation
-              will be handled by this script even if the browser supports
-              native smooth scroll. <b>Not recommended.</b></p>
-          </div>
-        </div>
-        <h3 id="methods"><span>Methods: <code>destroy</code> and <code>polyfill</code></span></h3>
-        <div>
-          <p>This package exports two methods, <code>destroy</code> and <code>polyfill</code>.
+          <p>This package exports two methods, <code>destroy</code> and
+            <code>polyfill</code>.<br>
             If loaded through a script tag, these methods are exposed on
-            <span class="allow-overflow"><code>window.smoothscrollAnchorPolyfill</code></span>.</p>
-          <p>Both methods return the polyfill instance so you can chain them
-            (e.g. <code>.destroy().polyfill()</code> to restart the script).</p>
+            <span class="allow-overflow"><code>window.smoothscrollAnchorPolyfill</code></span>.
+          </p>
+        <div class="row row-wrap">
+          <div class="column column-33" style="flex-grow:1;max-width:100%;overflow:auto;">
+            <code>polyfill({ force: boolean })</code>:
+          </div>
+          <div class="column column-66" style="flex-grow:1;max-width:100%;">
+            <p>The <code>polyfill</code> method starts the polyfill. If it is already active, it will simply restart – so you can safely call it without running <code>destroy()</code> first.<br>
+              The method takes an (optional) Object as argument, if you set the property <code>force</code> to true, anchor navigation will be handled by this script even if the browser supports native smooth scroll. <b>Not recommended.</b></p>
+          </div>
         </div>
         <div class="row row-wrap">
           <div class="column column-33" style="flex-grow:1;max-width:100%;">
             <code>destroy()</code>:
           </div>
           <div class="column column-66" style="flex-grow:1;max-width:100%;">
-            <p>The polyfill runs automatically when it's loaded, setting up
-              the EventListeners it needs. This method disables the
-              polyfill and removes all EventListeners.</p>
+            <p>Disables the polyfill and removes all EventListeners.</p>
           </div>
         </div>
-        <div class="row row-wrap">
-          <div class="column column-33" style="flex-grow:1;max-width:100%;overflow:auto;">
-            <code>polyfill({ force: boolean })</code>:
-          </div>
-          <div class="column column-66" style="flex-grow:1;max-width:100%;">
-            <p>If you used <code>destroy()</code> to disable the polyfill,
-              you can re-enable it with this method. It takes an (optional)
-              Object as argument, the property <code>force</code> behaves
-              like the <a href="#force-flag">global force flag</a>, but
-              overrides it if both are set.</p>
-          </div>
-        </div>
-        <p>⚠ Note that both the global force flag and
-          the check for native support (<span class="allow-overflow"><code>'scrollBehavior' in document.documentElement.style</code></span>)
-          will be re-evaluated when <code>polyfill()</code> runs. If you
-          assigned to <code>.scrollBehavior</code> in the meantime, this check
-          will evaluate to <code>true</code> and the polyfill won't enable
-          itself. Use the force flag or run <span class="allow-overflow"><code>delete document.documentElement.style.scrollBehavior;</code></span>
-          if you encounter this problem.</p>
+<br><br>
         <h3 id="limitations"><span>Limitations</span></h3>
         <h4 id="no-regular-stylesheets"><span><code>scroll-behavior</code> is
             not detected in regular stylesheets</span></h4>
@@ -294,7 +287,8 @@ if (!('scrollBehavior') in document.documentElement.style) {
             workaround</a>.</p>
         <h4 id="global-only"><span><code>scroll-behavior</code> is only
             supported as global setting</span></h4>
-        <p>In browsers with native support, you can define <code>scroll-behavior</code>
+        <p>In browsers with native support, you can define
+          <code>scroll-behavior</code>
           at multiple points in your document, e.g. <code>auto</code> on
           the document itself, but <code>smooth</code> on a slideshow
           container that has separate scrolling. This polyfill does not
@@ -303,10 +297,13 @@ if (!('scrollBehavior') in document.documentElement.style) {
           at document level, or none.</p>
         <h4 id="no-javascript-scroll"><span><code>scroll-behavior</code>
             doesn't affect scrolling triggered from JavaScript</span></h4>
-        <p>This polyfill only affects scrolling triggered by clicks on <code>&lt;a></code>
+        <p>This polyfill only affects scrolling triggered by clicks on
+          <code>&lt;a></code>
           tags and through <code>hashchange</code> events. You'll still have to
-          pass <code>{ behavior: 'smooth' }</code> when using APIs like <code>window.scroll()</code>
-          unless your polyfill for these APIs has it's own CSS property check.</p>
+          pass <code>{ behavior: 'smooth' }</code> when using APIs like
+          <code>window.scroll()</code>
+          unless your polyfill for these APIs has it's own CSS property check.
+        </p>
         <h4 id="native-inconsistencies"><span>Inconsistencies in native
             implementations</span></h4>
         <p>While Scroll Behavior has native support in a couple of browsers
@@ -320,7 +317,8 @@ if (!('scrollBehavior') in document.documentElement.style) {
           forwards/backwards buttons (which triggers a <code>hashchange</code>
           everytime), it jumps from anchor to anchor instead of scrolling
           smoothly.<br>If this is important to you, you can fix it by detecting
-          the Blink engine and force-enabling this polyfill. Load <a href="https://github.com/isocroft/browsengine">browsengine.js</a>,
+          the Blink engine and force-enabling this polyfill. Load <a
+            href="https://github.com/isocroft/browsengine">browsengine.js</a>,
           then do (<i>before</i> the polyfill runs):</p>
         <pre><code>if (window.webpage.engine.blink) {
           window.__forceSmoothscrollAnchorPolyfill__ = true;
@@ -329,6 +327,7 @@ if (!('scrollBehavior') in document.documentElement.style) {
           <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=279629#c27">Anchors
             pointing to <code>#top</code> don't smooth scroll.</a> Use
           anchors pointing at <code>#</code> for an easy fix.</p>
+          <br><br>
         <h3 id="faq"><span>FAQ</span></h3>
         <h4 id="ssr"><span>Will this break Server Side Rendering?</span></h4>
         <p>No.</p>
@@ -338,7 +337,8 @@ if (!('scrollBehavior') in document.documentElement.style) {
             Delegation</a> to detect clicks,
           so even if an anchor is added to the page after the polyfill was
           loaded, everything should work.</p>
-        <h4 id="reduced-motion"><span>Does this support <code>prefers-reduced-motion</code>?</span></h4>
+        <h4 id="reduced-motion"><span>Does this support
+            <code>prefers-reduced-motion</code>?</span></h4>
         <p><code>prefers-reduced-motion</code> is a relatively new CSS media
           query that hints at whether a client prefers less motion, which can
           be important for people with certain illnesses. Firefox currently is
@@ -348,12 +348,13 @@ if (!('scrollBehavior') in document.documentElement.style) {
           scrolling is <b>not</b> disabled automatically if this media query
           matches.<br>
           So no, this polyfill does not automatically disable itself if the
-          client prefers less motion, but yes, it supports <code>prefers-reduced-motion</code>
+          client prefers less motion, but yes, it supports
+          <code>prefers-reduced-motion</code>
           the same way Firefox does – via a media query:
           <pre><code>@media (prefers-reduced-motion: reduce) {
   html {
+    --scroll-behavior: auto;
     scroll-behavior: auto;
-    font-family: "scroll-behavior: auto";
   }
 }</code></pre>
         </p>
@@ -361,13 +362,15 @@ if (!('scrollBehavior') in document.documentElement.style) {
       <!--  -->
       <!-- Way too big legal section  -->
       <section>
-        <label class="label-inline" for="language" id="legal">Show in German? (<b>Deutsch</b>)</label>
+        <label class="label-inline" for="language"
+          id="legal">Show in German? (<b>Deutsch</b>)</label>
         <input type="checkbox" name="language" id="language">
         <div class="german">
           <h2><span>Rechtliches</span></h2>
           <p><strong>Hinweis: die folgenden rechtlichen Hinweise betreffen
               diese Website als solche entsprechend deutschem und europäischem
-              Recht, nicht das vorgestellte Software-Paket <em>"smoothscroll-anchor-polyfill"</em>.
+              Recht, nicht das vorgestellte Software-Paket
+              <em>"smoothscroll-anchor-polyfill"</em>.
               <em>"smoothscroll-anchor-polyfill"</em>
               selbst ist lizensiert nach der MIT-Lizenz, mehr Informationen
               können dem <a href="https://github.com/jonaskuske/smoothscroll-anchor-polyfill">GitHub
@@ -476,8 +479,8 @@ if (!('scrollBehavior') in document.documentElement.style) {
             <li>Verwendetes Betriebssystem</li>
             <li>Verwendete IP-Adresse</li>
           </ul>
-          <p>Diese Seite verwendet den Dienst <a href="https://fonts.google.com"
-              target="_blank" rel="noopener">Google Fonts</a>, um verschiedene
+          <p>Diese Seite verwendet den Dienst <a href="https://fonts.google.com" target="_blank"
+              rel="noopener">Google Fonts</a>, um verschiedene
             Schriftarten einzubinden. Beim Abrufen der Schriftdateien, was bei
             Seitenaufruf automatisch geschieht, können die Daten, die oben
             aufgelistet
@@ -497,11 +500,14 @@ if (!('scrollBehavior') in document.documentElement.style) {
         <div class="english">
           <h2><span>Legal</span></h2>
           <p><strong>Note: the legalities discussed here concern this website
-              itself, not the software package <em>"smoothscroll-anchor-polyfill"</em>,
-              and are required for compliance with German & European law. <em>"smoothscroll-anchor-polyfill"</em>
+              itself, not the software package
+              <em>"smoothscroll-anchor-polyfill"</em>,
+              and are required for compliance with German & European law.
+              <em>"smoothscroll-anchor-polyfill"</em>
               itself is licensed under a plain MIT license, for more
               information
-              check out the respective <a href="https://github.com/jonaskuske/smoothscroll-anchor-polyfill">GitHub
+              check out the respective <a
+                href="https://github.com/jonaskuske/smoothscroll-anchor-polyfill">GitHub
                 repository</a>.</strong></p>
           <h3>Imprint</h3>
           <p><b>Information in accordance with section §5 TMG</b></p>
@@ -535,13 +541,11 @@ if (!('scrollBehavior') in document.documentElement.style) {
             10 of the Telemedia Act(TMG).</p>
 
           <p><b>Accountability for links</b></p>
-          <p>Responsibility for the content of external links (to web pages of
-            third
-            parties) lies solely with the operators of the linked pages. No
-            violations were
-            evident to us at the time of linking. Should any legal infringement
-            become
-            known to us, we will remove the respective link immediately.</p>
+          <p>Responsibility for the content of external links (to web pages of third parties) lies
+            solely with the operators of the linked pages. No violations were evident to us at the
+            time of linking. Should any legal infringement become known to us, we will remove the
+            respective link immediately.
+          </p>
 
           <h4>Copyright</h4>
           <p>Our web pages and their contents are subject to German copyright
@@ -562,8 +566,8 @@ if (!('scrollBehavior') in document.documentElement.style) {
             <li>Used operating system</li>
             <li>Used IP address</li>
           </ul>
-          <p>This website is using service <a href="https://fonts.google.com"
-              target="_blank" rel="noopener">Google Fonts</a> to load font
+          <p>This website is using service <a href="https://fonts.google.com" target="_blank"
+              rel="noopener">Google Fonts</a> to load font
             files. While loading the font files – which happens automatically
             when visiting this site – the pieces of data listed above might
             be gathered and stored by service provider Google as well.</p>
@@ -579,7 +583,7 @@ if (!('scrollBehavior') in document.documentElement.style) {
 
     <footer class="container">
       <div class="row row-center row-no-padding">
-        <p>© 2018, Jonas Kuske</p>
+        <p>© 2019, Jonas Kuske</p>
       </div>
     </footer>
 

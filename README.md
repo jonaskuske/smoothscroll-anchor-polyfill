@@ -44,37 +44,69 @@
 ) already. 
 
 ### 1. Set `scroll-behavior: smooth` in CSS
-> Has to be set global (on `html`), [check the docs for limitations](https://jonaskuske.github.io/smoothscroll-anchor-polyfill#global-only)  
+> ⚠ Has to be set global (on `html`), [check the docs for limitations](https://jonaskuske.github.io/smoothscroll-anchor-polyfill#global-only)  
 
-Because CSS properties unknown to a browser can't efficiently be parsed from JavaScript, using normal stylesheets is not enough unfortunately. To specify the property in a way the polyfill can read it, you have two options:
-#### 1a. Using inline styles
+&nbsp;
+
+Because CSS properties unknown to a browser can't efficiently be parsed from JavaScript, just specyfing the normal `scroll-behavior` property is not enough unfortunately.  
+You need to add an additional CSS variable so the polyfill can read it:
+
+```css
+html {
+  --scroll-behavior: smooth;
+  scroll-behavior: smooth;
+}
+```
+
+You can also use media queries, toggle classes etc. to control the smooth scroll. The following only enables smooth scroll on Desktop devices, for example:
+
+```css
+  html {
+    --scroll-behavior: auto;
+    scroll-behavior: auto;
+  }
+
+  @media screen and (min-width: 1150px) {
+    html {
+      --scroll-behavior: smooth;
+      scroll-behavior: smooth;
+    }
+  }
+```
+
+&nbsp;
+
+> 💡 This process can be automated using a [PostCSS plugin](https://github.com/jonaskuske/postcss-smoothscroll-anchor-polyfill), so you can write regular CSS and it'll be transformed to work with the polyfill automatically.  
+The plugin will also read your [browserslist](https://github.com/browserslist/browserslist) and choose the right transformation depending on if all your browsers support CSS variables or not. It just works™
+
+&nbsp;
+
+#### Need to support Internet Explorer?
+
+Legacy browsers like Internet Explorer do not support CSS variables, so you need another way to specify `scroll-behavior`. There are two options:
+
+##### Using the inline `style` attribute
 ```html
 <html style="scroll-behavior: smooth;">
 ...
 </html>
 ```
 
-#### 1b. Using `font-family` as workaround
-Alternatively, you can specify the property as the name of a custom font family. Your actual fonts will still work the way they should (plus, you can simply declare actual fonts on `body`). Unlike inline styles, this allows you to use normal CSS features like media queries. The following only enables smooth scroll on desktop devices, for example:
+##### Using `font-family`
+Alternatively, you can specify the property as the name of a custom font family. Your actual fonts will still work the way they should (plus, you can simply declare actual fonts on `body`). As with CSS variables (and unlike inline styles), this allows you to use normal CSS features like media queries.
 ```html
 <style>
   html {
     scroll-behavior: auto;
     font-family: 'scroll-behavior: auto;', 'Roboto', sans-serif;
   }
-
-  @media screen and (min-width: 1150px) {
-    html {
-      scroll-behavior: smooth;
-      font-family: 'scroll-behavior: smooth;', 'Roboto', sans-serif;
-    }
-  }
 </style>
 ```
-> This process can be automated using a [PostCSS plugin](https://github.com/jonaskuske/postcss-smoothscroll-anchor-polyfill), so you can write regular CSS and don't have to bother with font-families. It just works™
+
+&nbsp;
 
 ### 2. Install the polyfill
-Because this polyfill only wires up anchor links to use the browser's native `window.scroll()` and `element.scrollIntoView()` methods, you'll need to load a polyfill providing smooth scroll to these methods in addition to the steps outlined below.
+Because this polyfill only wires up anchor links to use the browser's native `window.scroll()` and `element.scrollIntoView()` methods, you'll need to load a polyfill providing smooth scroll to these methods **in addition to the steps outlined below**.
 > [smoothscroll-polyfill](http://iamdustan.com/smoothscroll/) works, but you can just as well use another one or write your own implementation. [Learn More](https://jonaskuske.github.io/smoothscroll-anchor-polyfill#usage)
 #### 2a. From a CDN
 ```html

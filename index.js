@@ -17,7 +17,7 @@ var _DEBUG_ = true; // removed during minification
     if (isBrowser) {
       /**
        * Add flag to Window interface, workaround for type check
-       * @typedef {{__forceSmoothscrollAnchorPolyfill__: [boolean]}} GlobalFlag
+       * @typedef {{__forceSmoothscrollAnchorPolyfill__: [boolean]}} GlobalFlag @deprecated
        * @typedef {Window & GlobalFlag} WindowWithFlag
        * @type {WindowWithFlag} */
       var w = (window), d = document, docEl = d.documentElement, dummy = d.createElement('a');
@@ -37,6 +37,7 @@ var _DEBUG_ = true; // removed during minification
     this.polyfill = function(opts) {
       opts = opts || {};
       if (isBrowser) {
+        /** @deprecated */
         var globalFlag = w.__forceSmoothscrollAnchorPolyfill__;
         var force = typeof opts.force === 'boolean' ? opts.force : globalFlag;
 

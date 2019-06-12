@@ -22,7 +22,7 @@
  - ✔ Updates URL with #fragment
  - ✔ Handles focus for improved accessibility
  - ✔ Doesn't break server-side rendering
- - ✔ 1.2KB gzipped
+ - ✔ 1.3KB gzipped
 
 ⚠ Requires smooth scroll for `window.scroll()` and `Element.scrollIntoView()` (e.g. [smoothscroll-polyfill](http://iamdustan.com/smoothscroll/)) to work!
 

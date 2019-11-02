@@ -210,7 +210,7 @@ smoothscrollPolyfill.polyfill();
             support for the Scroll Behavior spec natively:</p>
           <label for="js-usage">In your JavaScript code:</label>
           <pre><code id="js-usage-advanced">// Only continue if polyfills are actually needed
-if (!('scrollBehavior') in document.documentElement.style) {
+if (!('scrollBehavior' in document.documentElement.style)) {
 
   // Wait until the Polyfills are loaded
   Promise.all([

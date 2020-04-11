@@ -18,7 +18,7 @@ var _DEBUG_ = true; // removed during minification
       /**
        * Add flag to Window interface, workaround for type check
        * @typedef {{__forceSmoothscrollAnchorPolyfill__: [boolean]}} GlobalFlag @deprecated
-       * @typedef {Window & GlobalFlag} WindowWithFlag
+       * @typedef {typeof globalThis & Window & GlobalFlag} WindowWithFlag
        * @type {WindowWithFlag} */
       var w = (window), d = document, docEl = d.documentElement, dummy = d.createElement('a');
     }
@@ -260,8 +260,9 @@ var _DEBUG_ = true; // removed during minification
      * @param {MouseEvent} evt
      */
     function handleClick(evt) {
-      // Abort if shift/ctrl-click or not primary click (button !== 0)
-      if (evt.metaKey || evt.ctrlKey || evt.shiftKey || evt.button !== 0) return;
+      var notPrimaryClick = evt.metaKey || evt.ctrlKey || evt.shiftKey || evt.button !== 0;
+      if (evt.defaultPrevented || notPrimaryClick) return;
+
       // scroll-behavior not set to smooth? Bail out, let browser handle it
       if (!shouldSmoothscroll()) return;
 

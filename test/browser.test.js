@@ -290,4 +290,17 @@ describe('Toggling during runtime', () => {
     anchor.click()
     expect(spy).toHaveBeenCalledTimes(1)
   })
+
+  it('Allows aborting navigation using evt.preventDefault()', () => {
+    document.documentElement.setAttribute('style', 'scroll-behavior:smooth')
+    const anchor = insertElement('a', { href: '#top' })
+
+    const spy = jest.spyOn(window, 'scroll')
+    polyfill()
+
+    anchor.addEventListener('click', evt => evt.preventDefault())
+    anchor.click()
+    
+    expect(spy).not.toHaveBeenCalled()
+  })
 })

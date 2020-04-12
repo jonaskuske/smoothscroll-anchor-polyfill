@@ -152,15 +152,21 @@ var _DEBUG_ = true; // removed during minification
      * @returns {boolean}
      */
     function isAnchorToLocalElement(el) {
-      // Check if element is an anchor with a fragment in the url
+      // False if element isn't "a" or href has no #fragment
       if (!/^a$/i.test(el.tagName) || !/#/.test(el.href)) return false;
 
       // Fix bug in IE9 where anchor.pathname misses leading slash
       var anchorPath = el.pathname;
       if (anchorPath[0] !== '/') anchorPath = '/' + anchorPath;
 
-      // Check if anchor targets an element on the current page
-      return (el.hostname === location.hostname && anchorPath === location.pathname);
+      // False if target isn't current page
+      if (el.hostname !== location.hostname || anchorPath !== location.pathname) return false;
+
+      // False if anchor targets a ?query that is different from the current one
+      // e.g. /?page=1 → /?page=2#content
+      if (el.search && el.search !== location.search) return false;
+
+      return true;
     }
 
     /**

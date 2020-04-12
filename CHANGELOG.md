@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - The scroll navigation is now prevented if you call `event.preventDefault()` on the click event (fix #32)
+- Polyfill now skips handling click events if the href has a query string that is different from the current one (fix #28)  
+Previously, a navigation from `/?page=1` to `/?page=2#content` would not work: because the path is the same, the polyfill would intercept the navigation even though the different query params meant that the target was an entirely different page/website  
 
 ## [1.3.0] - 2019-06-12
 

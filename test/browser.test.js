@@ -168,6 +168,28 @@ describe('Scroll targeting', () => {
     expect(spy).toHaveBeenCalled()
     expect(windowSpy).not.toHaveBeenCalled()
   })
+
+  it('Bails out if anchor targets a URL with different query param', () => {
+    history.pushState(null, '', '?a')
+    document.documentElement.setAttribute('style', 'scroll-behavior:smooth');
+
+    const noQuery = insertElement('a', { href: '#top' });
+    const sameQuery = insertElement('a', { href: '?a#top' });
+    const diffQuery = insertElement('a', { href: '?b#top' });
+
+    const spy = jest.spyOn(window, 'scroll');
+    polyfill();
+
+    // works if anchor target has no query at all
+    noQuery.click();
+    expect(spy).toHaveBeenCalledTimes(1);
+    // works if anchor target has same query as current one
+    sameQuery.click();
+    expect(spy).toHaveBeenCalledTimes(2);
+    // bails out if query is different from current one
+    diffQuery.click()
+    expect(spy).toHaveBeenCalledTimes(2)
+  })
 })
 
 describe('Ways to enable/disable', () => {
@@ -289,5 +311,18 @@ describe('Toggling during runtime', () => {
     document.documentElement.style.font = '100 1rem "scroll-behavior:inherit"'
     anchor.click()
     expect(spy).toHaveBeenCalledTimes(1)
+  })
+
+  it('Allows aborting navigation using evt.preventDefault()', () => {
+    document.documentElement.setAttribute('style', 'scroll-behavior:smooth')
+    const anchor = insertElement('a', { href: '#top' })
+
+    const spy = jest.spyOn(window, 'scroll')
+    polyfill()
+
+    anchor.addEventListener('click', evt => evt.preventDefault())
+    anchor.click()
+
+    expect(spy).not.toHaveBeenCalled()
   })
 })

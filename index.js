@@ -1,6 +1,6 @@
 // @ts-check
 
-/** @license MIT smoothscroll-anchor-polyfill __VERSION__ (c) 2019 Jonas Kuske */
+/** @license MIT smoothscroll-anchor-polyfill __VERSION__ (c) 2020 Jonas Kuske */
 
 var _DEBUG_ = true; // removed during minification
 
@@ -18,7 +18,7 @@ var _DEBUG_ = true; // removed during minification
       /**
        * Add flag to Window interface, workaround for type check
        * @typedef {{__forceSmoothscrollAnchorPolyfill__: [boolean]}} GlobalFlag @deprecated
-       * @typedef {Window & GlobalFlag} WindowWithFlag
+       * @typedef {typeof globalThis & Window & GlobalFlag} WindowWithFlag
        * @type {WindowWithFlag} */
       var w = (window), d = document, docEl = d.documentElement, dummy = d.createElement('a');
     }
@@ -152,15 +152,21 @@ var _DEBUG_ = true; // removed during minification
      * @returns {boolean}
      */
     function isAnchorToLocalElement(el) {
-      // Check if element is an anchor with a fragment in the url
+      // False if element isn't "a" or href has no #fragment
       if (!/^a$/i.test(el.tagName) || !/#/.test(el.href)) return false;
 
       // Fix bug in IE9 where anchor.pathname misses leading slash
       var anchorPath = el.pathname;
       if (anchorPath[0] !== '/') anchorPath = '/' + anchorPath;
 
-      // Check if anchor targets an element on the current page
-      return (el.hostname === location.hostname && anchorPath === location.pathname);
+      // False if target isn't current page
+      if (el.hostname !== location.hostname || anchorPath !== location.pathname) return false;
+
+      // False if anchor targets a ?query that is different from the current one
+      // e.g. /?page=1 → /?page=2#content
+      if (el.search && el.search !== location.search) return false;
+
+      return true;
     }
 
     /**
@@ -260,8 +266,9 @@ var _DEBUG_ = true; // removed during minification
      * @param {MouseEvent} evt
      */
     function handleClick(evt) {
-      // Abort if shift/ctrl-click or not primary click (button !== 0)
-      if (evt.metaKey || evt.ctrlKey || evt.shiftKey || evt.button !== 0) return;
+      var notPrimaryClick = evt.metaKey || evt.ctrlKey || evt.shiftKey || evt.button !== 0;
+      if (evt.defaultPrevented || notPrimaryClick) return;
+
       // scroll-behavior not set to smooth? Bail out, let browser handle it
       if (!shouldSmoothscroll()) return;
 

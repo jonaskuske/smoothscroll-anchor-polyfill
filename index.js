@@ -1,6 +1,6 @@
 // @ts-check
 
-/** @license MIT smoothscroll-anchor-polyfill __VERSION__ (c) 2019 Jonas Kuske */
+/** @license MIT smoothscroll-anchor-polyfill __VERSION__ (c) 2020 Jonas Kuske */
 
 var _DEBUG_ = true; // removed during minification
 

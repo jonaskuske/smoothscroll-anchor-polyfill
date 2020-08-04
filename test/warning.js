@@ -1,1 +1,0 @@
-console.log("⚠\nNo tests for '--scroll-behavior' as JSDOM doesn't support CSS custom properties.\n")

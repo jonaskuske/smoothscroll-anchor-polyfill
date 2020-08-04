@@ -17,14 +17,8 @@
     "not dead"
   ],
   "scripts": {
-    "test": "node test/warning && jest --verbose",
-    "build": "npm run copy && npm run build:esm && npm run minify && npm run version",
-    "copy": "npx copyfiles index.js dist",
-    "build:esm": "node scripts/esm.js",
-    "minify": "npm run minify:umd && npm run minify:esm",
-    "minify:umd": "npx terser dist/index.js -o dist/index.min.js -m -c passes=3 -d _DEBUG_=false --toplevel",
-    "minify:esm": "npx terser dist/index.mjs -o dist/index.min.mjs -m -c passes=3 -d _DEBUG_=false --module",
-    "version": "npx replace '__VERSION__' $npm_package_version dist/*",
+    "test": "jest --verbose",
+    "build": "rollup --config",
     "prepublishOnly": "npm run build"
   },
   "repository": {
@@ -49,9 +43,68 @@
   },
   "homepage": "https://jonaskuske.github.io/smoothscroll-anchor-polyfill",
   "devDependencies": {
-    "copyfiles": "^2.1.0",
-    "jest": "^23.6.0",
-    "replace": "^1.0.0",
-    "terser": "^3.11.0"
+    "@babel/core": "^7.11.0",
+    "@babel/preset-env": "^7.11.0",
+    "@rollup/plugin-babel": "^5.1.0",
+    "@yarnpkg/pnpify": "^2.1.0",
+    "babel-jest": "^26.2.2",
+    "eslint": "^7.6.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "jest": "^26.2.2",
+    "prettier": "^2.0.5",
+    "rollup": "^2.23.0",
+    "rollup-plugin-filesize": "^9.0.2",
+    "rollup-plugin-terser": "^6.1.0"
+  },
+  "babel": {
+    "moduleId": "SmoothscrollAnchorPolyfill",
+    "env": {
+      "production": {
+        "presets": [
+          [
+            "@babel/preset-env",
+            {
+              "modules": "umd"
+            }
+          ]
+        ]
+      },
+      "test": {
+        "presets": [
+          [
+            "@babel/preset-env"
+          ]
+        ]
+      }
+    }
+  },
+  "eslintConfig": {
+    "root": true,
+    "extends": [
+      "eslint:recommended",
+      "plugin:prettier/recommended"
+    ],
+    "env": {
+      "browser": true
+    },
+    "parserOptions": {
+      "sourceType": "module",
+      "ecmaVersion": 2020
+    },
+    "rules": {
+      "no-empty": "off"
+    }
+  },
+  "eslintIgnore": [
+    "dist",
+    ".yarn",
+    ".pnp.js"
+  ],
+  "prettier": {
+    "endOfLine": "auto",
+    "singleQuote": true,
+    "semi": false,
+    "printWidth": 100
   }
 }

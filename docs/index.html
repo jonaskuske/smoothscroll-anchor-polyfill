@@ -54,6 +54,19 @@
           </div>
           <div class="scroll-btn-spacer">
             <div id="scroll-btn"><button>Toggle smooth scroll</button></div>
+            <p class="max-width"><small>disabled due to <code>prefers-reduced-motion</code> in your system settings</small></p>
+            <script>
+              !function() {
+                if (!window.matchMedia) return;
+                var mq = window.matchMedia('prefers-reduced-motion: reduce');
+                function update() {
+                  document.querySelector('#scroll-btn button').disabled = mq.matches;
+                  document.querySelector('#scroll-btn p').style.visibility = mq.matches ? 'visible' : 'hidden';
+                }
+                mq.addListener(update);
+                update();
+              }();
+            </script>
           </div>
         </div>
       </div>

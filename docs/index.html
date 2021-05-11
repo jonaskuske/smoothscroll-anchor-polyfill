@@ -53,8 +53,10 @@
               href="https://github.com/jonaskuske/smoothscroll-anchor-polyfill">GitHub</a>
           </div>
           <div class="scroll-btn-spacer">
-            <div id="scroll-btn"><button>Toggle smooth scroll</button></div>
-            <p class="max-width"><small>disabled due to <code>prefers-reduced-motion</code> in your system settings</small></p>
+            <div id="scroll-btn">
+              <button>Toggle smooth scroll</button>
+              <p class="max-width" style="visibility: hidden"><small>disabled due to <code>prefers-reduced-motion</code> in your system settings</small></p>
+            </div>
             <script>
               !function() {
                 if (!window.matchMedia) return;

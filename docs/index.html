@@ -60,7 +60,7 @@
             <script>
               !function() {
                 if (!window.matchMedia) return;
-                var mq = window.matchMedia('prefers-reduced-motion: reduce');
+                var mq = window.matchMedia('(prefers-reduced-motion: reduce)');
                 function update() {
                   document.querySelector('#scroll-btn button').disabled = mq.matches;
                   document.querySelector('#scroll-btn p').style.visibility = mq.matches ? 'visible' : 'hidden';

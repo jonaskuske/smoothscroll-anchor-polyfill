@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.3] - TBA
+
+### Changed
+
+- Build setup now uses `rollup` for more robust artifacts (decreases file sizes for `.mjs` files but increases them for `.js` files)
+- Upgraded all dependencies
+- Updated year in copyright notices
+- Added `package#packageManager` field to support corepack
+
+### Fixed
+
+- Prevent global scope pollution in UMD builds (previous babel/terser setup created global variables `e` and `t`)
+
 ## [1.3.2] - 2020-04-12
 
 ### Fixed

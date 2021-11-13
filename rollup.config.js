@@ -7,7 +7,7 @@ import pkg from './package.json'
 
 process.env.NODE_ENV = 'production'
 
-const banner = `/** @license MIT smoothscroll-anchor-polyfill@${pkg.version} (c) 2020 Jonas Kuske */`
+const banner = `/** @license MIT smoothscroll-anchor-polyfill@${pkg.version} (c) 2021 Jonas Kuske */`
 
 const esmPreset = ['@babel/preset-env', { targets: { esmodules: true }, bugfixes: true }]
 

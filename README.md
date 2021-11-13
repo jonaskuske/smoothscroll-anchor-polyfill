@@ -147,4 +147,4 @@ The documentation site itself is built as a smooth scrolling one-page design, ut
 
 &nbsp;
 
-© 2020, Jonas Kuske
+© 2021, Jonas Kuske

@@ -43,19 +43,18 @@
   },
   "homepage": "https://jonaskuske.github.io/smoothscroll-anchor-polyfill",
   "devDependencies": {
-    "@babel/core": "^7.11.0",
-    "@babel/preset-env": "^7.11.0",
-    "@rollup/plugin-babel": "^5.1.0",
-    "@yarnpkg/pnpify": "^2.1.0",
-    "babel-jest": "^26.2.2",
-    "eslint": "^7.6.0",
-    "eslint-config-prettier": "^6.11.0",
-    "eslint-plugin-prettier": "^3.1.4",
-    "jest": "^26.2.2",
-    "prettier": "^2.0.5",
-    "rollup": "^2.23.0",
-    "rollup-plugin-filesize": "^9.0.2",
-    "rollup-plugin-terser": "^6.1.0"
+    "@babel/core": "^7.16.0",
+    "@babel/preset-env": "^7.16.0",
+    "@rollup/plugin-babel": "^5.3.0",
+    "babel-jest": "^27.3.1",
+    "eslint": "^8.2.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "jest": "^27.3.1",
+    "prettier": "^2.4.1",
+    "rollup": "^2.60.0",
+    "rollup-plugin-filesize": "^9.1.1",
+    "rollup-plugin-terser": "^7.0.2"
   },
   "babel": {
     "moduleId": "SmoothscrollAnchorPolyfill",
@@ -90,7 +89,7 @@
     },
     "parserOptions": {
       "sourceType": "module",
-      "ecmaVersion": 2020
+      "ecmaVersion": 2021
     },
     "rules": {
       "no-empty": "off"
@@ -99,7 +98,8 @@
   "eslintIgnore": [
     "dist",
     ".yarn",
-    ".pnp.js"
+    ".pnp.cjs",
+    ".pnp.loader.mjs"
   ],
   "prettier": {
     "endOfLine": "auto",

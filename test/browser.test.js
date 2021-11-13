@@ -1,3 +1,5 @@
+/** @jest-environment jsdom */
+
 import {
   setupBrowserEnv,
   mockNativeSupport,

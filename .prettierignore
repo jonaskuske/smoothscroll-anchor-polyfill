@@ -1,4 +1,4 @@
 dist/
-.vscode/pnpify/
 .yarn/
-.pnp.js
+.pnp.cjs
+.pnp.loader.mjs

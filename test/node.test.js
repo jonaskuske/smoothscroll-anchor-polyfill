@@ -1,5 +1,3 @@
-/** @jest-environment node */
-
 describe('SSR', () => {
   it('Does not throw on require() in Node environment', () => {
     const fn = () => require('../src/index.js')

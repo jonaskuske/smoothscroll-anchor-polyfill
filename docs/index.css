@@ -10,13 +10,14 @@
   .smooth-scroll {
     scroll-behavior: auto;
     --scroll-behavior: auto;
-    font-family: "scroll-behavior: auto";
+    font-family: 'scroll-behavior: auto';
   }
 }
 
 body {
   margin: 0;
-  font-family: 'Roboto', 'Helvetica Neue', 'Helvetica', 'Arial', 'Segoe UI Emoji', 'Apple Color Emoji', 'Noto Color Emoji', sans-serif;
+  font-family: 'Roboto', 'Helvetica Neue', 'Helvetica', 'Arial', 'Segoe UI Emoji',
+    'Apple Color Emoji', 'Noto Color Emoji', sans-serif;
 }
 
 main {
@@ -68,11 +69,14 @@ header ul li:last-child a {
   margin-left: auto;
 }
 
-header, section, .fullscreen {
+header,
+section,
+.fullscreen {
   padding: 2rem;
 }
 
-section, .fullscreen {
+section,
+.fullscreen {
   padding-top: 5rem;
 }
 
@@ -119,7 +123,7 @@ html:not(.smooth-scroll) #scroll-btn button {
   position: relative;
 }
 
-html:not(.flex-center) .fullscreen>div {
+html:not(.flex-center) .fullscreen > div {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -152,7 +156,8 @@ section:nth-child(4) {
   background: #f1e7f7;
 }
 
-section:nth-child(5), footer>div {
+section:nth-child(5),
+footer > div {
   background: #eddff5;
 }
 
@@ -165,15 +170,15 @@ section:first-of-type {
   display: none;
 }
 
-#language:checked+.german {
+#language:checked + .german {
   display: block;
 }
 
-#language:checked+.german+.english {
+#language:checked + .german + .english {
   display: none;
 }
 
-footer>div.row {
+footer > div.row {
   flex-direction: column;
   width: auto;
   margin-left: 0;
@@ -181,7 +186,7 @@ footer>div.row {
   color: #fff;
 }
 
-footer>div.row p {
+footer > div.row p {
   margin: 1.5rem 0;
 }
 
@@ -210,15 +215,21 @@ footer>div.row p {
   }
 }
 
-h1[id] span, h2[id] span, h3[id] span, h4[id] span {
+h1[id] span,
+h2[id] span,
+h3[id] span,
+h4[id] span {
   position: relative;
   display: inline-block;
   transition: padding 200ms ease-out;
   cursor: pointer;
 }
 
-h1[id] span::before, h2[id] span::before, h3[id] span::before, h4[id] span::before {
-  content: "#";
+h1[id] span::before,
+h2[id] span::before,
+h3[id] span::before,
+h4[id] span::before {
+  content: '#';
   position: absolute;
   left: 0;
   top: 50%;
@@ -227,11 +238,17 @@ h1[id] span::before, h2[id] span::before, h3[id] span::before, h4[id] span::befo
   transition: opacity 0.3s ease-out;
 }
 
-h1[id] span:hover, h2[id] span:hover, h3[id] span:hover, h4[id] span:hover {
+h1[id] span:hover,
+h2[id] span:hover,
+h3[id] span:hover,
+h4[id] span:hover {
   padding-left: 2rem;
 }
 
-h1[id] span:hover::before, h2[id] span:hover::before, h3[id] span:hover::before, h4[id] span:hover::before {
+h1[id] span:hover::before,
+h2[id] span:hover::before,
+h3[id] span:hover::before,
+h4[id] span:hover::before {
   opacity: 0.5;
 }
 

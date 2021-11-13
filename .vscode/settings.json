@@ -1,0 +1,12 @@
+{
+  "search.exclude": {
+    "**/.yarn": true,
+    "**/.pnp.*": true
+  },
+  "eslint.nodePath": ".yarn/sdks",
+  "prettier.prettierPath": ".yarn/sdks/prettier/index.js",
+  "jest.jestCommandLine": "yarn jest",
+  "[javascript]": {
+    "editor.defaultFormatter": null // prettier is run through eslint
+  }
+}

@@ -1,6 +1,6 @@
 {
   "name": "smoothscroll-anchor-polyfill",
-  "version": "1.3.2",
+  "version": "1.3.3",
   "description": "Apply smooth scroll to anchor links to replicate CSS scroll-behavior",
   "main": "dist/index.js",
   "unpkg": "dist/index.min.js",
@@ -10,6 +10,7 @@
     "index.js",
     "!dist/.gitkeep"
   ],
+  "packageManager": "yarn@3.1.0",
   "browserslist": [
     "last 2 versions",
     "> 1%",
@@ -17,14 +18,8 @@
     "not dead"
   ],
   "scripts": {
-    "test": "node test/warning && jest --verbose",
-    "build": "npm run copy && npm run build:esm && npm run minify && npm run version",
-    "copy": "npx copyfiles index.js dist",
-    "build:esm": "node scripts/esm.js",
-    "minify": "npm run minify:umd && npm run minify:esm",
-    "minify:umd": "npx terser dist/index.js -o dist/index.min.js -m -c passes=3 -d _DEBUG_=false --toplevel",
-    "minify:esm": "npx terser dist/index.mjs -o dist/index.min.mjs -m -c passes=3 -d _DEBUG_=false --module",
-    "version": "npx replace '__VERSION__' $npm_package_version dist/*",
+    "test": "jest --verbose",
+    "build": "rollup --config",
     "prepublishOnly": "npm run build"
   },
   "repository": {
@@ -49,9 +44,68 @@
   },
   "homepage": "https://jonaskuske.github.io/smoothscroll-anchor-polyfill",
   "devDependencies": {
-    "copyfiles": "^2.1.0",
-    "jest": "^23.6.0",
-    "replace": "^1.0.0",
-    "terser": "^3.11.0"
+    "@babel/core": "^7.16.0",
+    "@babel/preset-env": "^7.16.0",
+    "@rollup/plugin-babel": "^5.3.0",
+    "babel-jest": "^27.3.1",
+    "eslint": "^8.2.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "jest": "^27.3.1",
+    "prettier": "^2.4.1",
+    "rollup": "^2.60.0",
+    "rollup-plugin-filesize": "^9.1.1",
+    "rollup-plugin-terser": "^7.0.2"
+  },
+  "babel": {
+    "moduleId": "SmoothscrollAnchorPolyfill",
+    "env": {
+      "production": {
+        "presets": [
+          [
+            "@babel/preset-env",
+            {
+              "modules": "umd"
+            }
+          ]
+        ]
+      },
+      "test": {
+        "presets": [
+          [
+            "@babel/preset-env"
+          ]
+        ]
+      }
+    }
+  },
+  "eslintConfig": {
+    "root": true,
+    "extends": [
+      "eslint:recommended",
+      "plugin:prettier/recommended"
+    ],
+    "env": {
+      "browser": true
+    },
+    "parserOptions": {
+      "sourceType": "module",
+      "ecmaVersion": 2021
+    },
+    "rules": {
+      "no-empty": "off"
+    }
+  },
+  "eslintIgnore": [
+    "dist",
+    ".yarn",
+    ".pnp.cjs",
+    ".pnp.loader.mjs"
+  ],
+  "prettier": {
+    "endOfLine": "auto",
+    "singleQuote": true,
+    "semi": false,
+    "printWidth": 100
   }
 }

@@ -1,31 +1,59 @@
 <!DOCTYPE html>
 <html lang="en" class="smooth-scroll">
-
   <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>smoothscroll-anchor-polyfill</title>
+
     <script>
-      // Some Polyfills for Internet Explorer 9, needed for this page
-      // Super cheap requestAnimationFrame polyfill
-      'requestAnimationFrame' in window || (window.requestAnimationFrame = function(a) { setTimeout(a, 0) });
-      // Element.classList polyfill
+      // Polyfills for IE9
+
+      // requestAnimationFrame
+      // prettier-ignore
+      'requestAnimationFrame' in window || (window.requestAnimationFrame = function (a) { setTimeout(a, 0) })
+
+      // Element.prototype.classList
+      // prettier-ignore
       !(function() { function a(e) { this.element = e } var b = function(e) { return e.replace(/^\s+|\s+$/g, '') }, c = function(e) { return new RegExp('(^|\\s+)' + e + '(\\s+|$)') }, d = function(e, f, g) { for (var h = 0; h < e.length; h++)f.call(g, e[h]) }; a.prototype = { add: function add() { d(arguments, function(e) { this.contains(e) || (this.element.className = b(this.element.className + ' ' + e)) }, this) }, remove: function remove() { d(arguments, function(e) { this.element.className = b(this.element.className.replace(c(e), ' ')) }, this) }, toggle: function toggle(e) { return this.contains(e) ? (this.remove(e), !1) : (this.add(e), !0) }, contains: function contains(e) { return c(e).test(this.element.className) }, item: function item(e) { return this.element.className.split(/\s+/)[e] || null }, replace: function replace(e, f) { this.remove(e), this.add(f) } }, 'classList' in Element.prototype || Object.defineProperty(Element.prototype, 'classList', { get: function get() { return new a(this) } }), window.DOMTokenList && !DOMTokenList.prototype.replace && (DOMTokenList.prototype.replace = a.prototype.replace) })();
     </script>
+
     <!-- Use any polyfill for the smoothscroll JavaScript API -->
     <script src="https://unpkg.com/smoothscroll-polyfill/dist/smoothscroll.min.js"></script>
     <!-- Use this polyfill to apply the JS smoothscroll to anchor links -->
     <script src="https://unpkg.com/smoothscroll-anchor-polyfill"></script>
-    <link rel="shortcut icon" type="image/x-icon" href="./favicon.ico">
-    <link href="https://fonts.googleapis.com/css?family=Roboto+Mono|Roboto:300,400,700"
-      rel="stylesheet">
-    <link rel="stylesheet" href="https://unpkg.com/milligram@1.3.0/dist/milligram.css">
-    <link rel="stylesheet" href="./index.css">
+
+    <link rel="shortcut icon" type="image/x-icon" href="./favicon.ico" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Roboto+Mono|Roboto:300,400,700"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="https://unpkg.com/milligram@1.3.0/dist/milligram.css" />
+    <link rel="stylesheet" href="./index.css" />
 
     <script>
       // Hide header after scroll (mobile only)
-      document.addEventListener('DOMContentLoaded', function() { var a = document, b = a.body, c = b.classList, e = a.documentElement.scrollTop || b.scrollTop; a.addEventListener('scroll', function() { var f = a.documentElement.scrollTop || b.scrollTop, g = f - e; 25 > Math.abs(g) || (0 < g ? c.add('hide-header') : c.remove('hide-header'), e = f) }, !1) });
+      document.addEventListener('DOMContentLoaded', function () {
+        var doc = document
+        var body = doc.body
+        var cls = body.classList
+        var prevScroll = doc.documentElement.scrollTop || body.scrollTop
+
+        doc.addEventListener(
+          'scroll',
+          function () {
+            var currentScroll = doc.documentElement.scrollTop || body.scrollTop
+            var diff = currentScroll - prevScroll
+            var down = 0 < diff
+
+            if (Math.abs(diff) > 25) {
+              down ? cls.add('hide-header') : cls.remove('hide-header')
+              prevScroll = currentScroll
+            }
+          },
+          { passive: true }
+        )
+      })
     </script>
   </head>
 
@@ -47,10 +75,15 @@
       <div class="fullscreen">
         <div>
           <h1>smoothscroll-anchor-polyfill</h1>
-          <p class="max-width">⚓ Apply smooth scroll to anchor links to
-            replicate CSS <code>scroll-behavior</code></p>
-          <div><a class="button button-outline"
-              href="https://github.com/jonaskuske/smoothscroll-anchor-polyfill">GitHub</a>
+          <p class="max-width">
+            ⚓ Apply smooth scroll to anchor links to replicate CSS <code>scroll-behavior</code>
+          </p>
+          <div>
+            <a
+              class="button button-outline"
+              href="https://github.com/jonaskuske/smoothscroll-anchor-polyfill"
+              >GitHub</a
+            >
           </div>
           <div class="scroll-btn-spacer">
             <div id="scroll-btn">
@@ -75,58 +108,58 @@
 
       <section>
         <h2 id="start"><span>Start</span></h2>
-        <p>The <a href="https://drafts.csswg.org/cssom-view/#propdef-scroll-behavior"><b>Scroll
-              Behavior</b></a> specification allows for
-          native smooth scrolling in browsers – both by using JavaScript scroll
-          APIs like <code>window.scrollTo</code> and
+        <p>
+          The
+          <a href="https://drafts.csswg.org/cssom-view/#propdef-scroll-behavior"
+            ><b>Scroll Behavior</b></a
+          >
+          specification allows for native smooth scrolling in browsers – both by using JavaScript
+          scroll APIs like <code>window.scrollTo</code> and
           <code>Element.scrollIntoView</code>
-          or by simply setting the property <code>scroll-behavior</code> to
-          <code>smooth</code> in CSS, which will then make any scrolling
-          <b>smooth
-            by default</b>. This includes scrolls that are triggered by an
-          anchor link pointing to an element on the page by targeting it's
-          <code>id</code> in the hash, like
-          <code>&lt;a href="#target"></code>.<br>
-          By using this CSS property, you can build a one-page design with
-          smooth scroll between the different sections without having to write
-          a single line of JS – just like this page is doing!
+          or by simply setting the property <code>scroll-behavior</code> to <code>smooth</code> in
+          CSS, which will then make any scrolling <b>smooth by default</b>. This includes scrolls
+          that are triggered by an anchor link pointing to an element on the page by targeting it's
+          <code>id</code> in the hash, like <code>&lt;a href="#target"></code>.<br />
+          By using this CSS property, you can build a one-page design with smooth scroll between the
+          different sections without having to write a single line of JS – just like this page is
+          doing!
         </p>
-        <p>Unfortunately, the Scroll Behavior spec is not supported in all
-          major browsers yet. 👎🏻<br>
-          There are several Polyfills available to fix this, for example <a
-            href="http://iamdustan.com/smoothscroll/"><code>smoothscroll-polyfill</code></a>.
-          But even if you use those, navigation happening due to clicks on
-          anchor elements is still instant without any smoothness: only the
-          JavaScript APIs are polyfilled.<br>
-          <b>This little script aims to fix this.</b> If the browser does not
-          support native Scroll Behavior, it will wire up all matching anchor
-          links so they use the (polyfilled and thus smooth) JS APIs for
-          navigation. Let the scrolling begin!
+        <p>
+          Unfortunately, the Scroll Behavior spec is not supported in all major browsers yet. 👎🏻<br />
+          There are several Polyfills available to fix this, for example
+          <a href="http://iamdustan.com/smoothscroll/"><code>smoothscroll-polyfill</code></a
+          >. But even if you use those, navigation happening due to clicks on anchor elements is
+          still instant without any smoothness: only the JavaScript APIs are polyfilled.<br />
+          <b>This little script aims to fix this.</b> If the browser does not support native Scroll
+          Behavior, it will wire up all matching anchor links so they use the (polyfilled and thus
+          smooth) JS APIs for navigation. Let the scrolling begin!
         </p>
       </section>
 
       <section>
         <h2 id="usage"><span>Usage</span></h2>
-        <p>⚠ Since this script uses the JavaScript scroll APIs and relies on
-          their smooth scroll functionality to operate, you'll need a
-          polyfill for the Scroll Behavior spec in order for this script to
-          make a difference. It just wires up <code>&lt;a></code> tags and
-          <code>hashchange</code> events to use <code>window.scroll()</code>
-          and <code>Element.scrollIntoView()</code>. <a
-            href="http://iamdustan.com/smoothscroll/"><code>smoothscroll-polyfill</code></a>
-          is used as example throughout this site, but you may just as well use
-          another polyfill – or write your own implementation. If you are using
-          jQuery on your site, you could use <code>$.animate()</code> to
-          provide smooth scroll for these scroll APIs, for example.</p>
-        <h3 id="usage-css"><span>1. Setting <code>scroll-behavior</code> in
-            CSS</span></h3>
-        <p>Browsers don't parse CSS properties they don't recognize.
-          For this reason, reading the <code>scroll-behavior</code> property
-          from your regular stylesheets is unfortunately not possible (without
-          a performance hit). Instead, you need to additionally specify <code>scroll-behavior</code>
-          using a <b>CSS variable</b>:</p>
+        <p>
+          ⚠ Since this script uses the JavaScript scroll APIs and relies on their smooth scroll
+          functionality to operate, you'll need a polyfill for the Scroll Behavior spec in order for
+          this script to make a difference. It just wires up <code>&lt;a></code> tags and
+          <code>hashchange</code> events to use <code>window.scroll()</code> and
+          <code>Element.scrollIntoView()</code>.
+          <a href="http://iamdustan.com/smoothscroll/"><code>smoothscroll-polyfill</code></a> is
+          used as example throughout this site, but you may just as well use another polyfill – or
+          write your own implementation. If you are using jQuery on your site, you could use
+          <code>$.animate()</code> to provide smooth scroll for these scroll APIs, for example.
+        </p>
+        <h3 id="usage-css">
+          <span>1. Setting <code>scroll-behavior</code> in CSS</span>
+        </h3>
+        <p>
+          Browsers don't parse CSS properties they don't recognize. For this reason, reading the
+          <code>scroll-behavior</code> property from your regular stylesheets is unfortunately not
+          possible (without a performance hit). Instead, you need to additionally specify
+          <code>scroll-behavior</code> using a <b>CSS variable</b>:
+        </p>
 
-          <pre><code>&lt;style>
+        <pre><code>&lt;style>
   html {
     /* CSS custom property for the polyfill */
     --scroll-behavior: smooth;
@@ -136,10 +169,13 @@
   }
 &lt;style></code></pre>
 
-<p>You can treat it like any other property, for example use media queries or toggle classes.<br>
-  The following only enables smooth scroll on Desktop devices:</p>
+        <p>
+          You can treat it like any other property, for example use media queries or toggle
+          classes.<br />
+          The following only enables smooth scroll on Desktop devices:
+        </p>
 
-          <pre><code>&lt;style>
+        <pre><code>&lt;style>
   html {
     --scroll-behavior: auto;
     scroll-behavior: auto;
@@ -153,24 +189,38 @@
   }
 &lt;style></code></pre>
 
-          <h4 id="legacy-browsers"><span>Need to support Internet Explorer?</span></h4>
-          <p>In legacy browsers like Internet Explorer, <a href="https://caniuse.com/#feat=css-variables">CSS Custom Properties are not supported</a>. To specify <code>scroll-behavior</code>, use one of the following options instead:</p>
+        <h4 id="legacy-browsers"><span>Need to support Internet Explorer?</span></h4>
+        <p>
+          In legacy browsers like Internet Explorer,
+          <a href="https://caniuse.com/#feat=css-variables"
+            >CSS Custom Properties are not supported</a
+          >. To specify <code>scroll-behavior</code>, use one of the following options instead:
+        </p>
 
-        <p><b>Using the inline <code>style</code> attribute:</b></p>
+        <p>
+          <b>Using the inline <code>style</code> attribute:</b>
+        </p>
         <pre><code>&lt;html style="scroll-behavior: smooth;">
 ...
 &lt;/html>
 </code></pre>
-        <p>This way, the polyfill can read the
-          property using <code>getAttribute('style')</code> even if the browser
-          doesn't parse it.</p>
+        <p>
+          This way, the polyfill can read the property using <code>getAttribute('style')</code> even
+          if the browser doesn't parse it.
+        </p>
 
-        <p><b>Using <code>font-family</code> as workaround</b></p>
-        <p>Alternatively, you can specify the property as the name of a custom
-          font family. Your actual fonts will still work the way they should (plus, you can
-          simply declare actual fonts on <code>body</code> instead of <code>html</code>).<br>
-          As with CSS variables (and unlike inline styles), this allows you to use normal CSS features like media queries or classes.
-          <pre><code>&lt;style>
+        <p>
+          <b>Using <code>font-family</code> as workaround</b>
+        </p>
+        <p>
+          Alternatively, you can specify the property as the name of a custom font family. Your
+          actual fonts will still work the way they should (plus, you can simply declare actual
+          fonts on <code>body</code> instead of <code>html</code>).<br />
+          As with CSS variables (and unlike inline styles), this allows you to use normal CSS
+          features like media queries or classes.
+        </p>
+
+        <pre><code>&lt;style>
   html {
     /* Normal CSS property for browsers with native support */
     scroll-behavior: smooth;
@@ -179,17 +229,25 @@
     font-family: "scroll-behavior: smooth", sans-serif;
   }
 &lt;style></code></pre>
-<br>
-        <p>💡 Redeclaring your <code>scroll-behavior</code> properties to work with this polyfill can be <b>automated</b> using a <a
-            href="https://github.com/jonaskuske/postcss-smoothscroll-anchor-polyfill"><b>PostCSS
-              plugin</b></a>. You simply write regular CSS and the plugin will intelligently transform it using one of the above options, depending on your supported browsers (detected via <a href="https://github.com/browserslist/browserslist">browserslist</a>). It just works™</p>
+        <br />
+        <p>
+          💡 Redeclaring your <code>scroll-behavior</code> properties to work with this polyfill can
+          be <b>automated</b> using a
+          <a href="https://github.com/jonaskuske/postcss-smoothscroll-anchor-polyfill"
+            ><b>PostCSS plugin</b></a
+          >. You simply write regular CSS and the plugin will intelligently transform it using one
+          of the above options, depending on your supported browsers (detected via
+          <a href="https://github.com/browserslist/browserslist">browserslist</a>). It just works™
+        </p>
 
-              <br>
+        <br />
 
         <h3 id="install"><span>2. Installing the polyfill</span></h3>
         <h4 id="install-script"><span>Option 1: Using &lt;script></span></h4>
-        <p>Simply drop in <code>&lt;script></code> tags linking to the
-          polyfill(s) and you're good to go.</p>
+        <p>
+          Simply drop in <code>&lt;script></code> tags linking to the polyfill(s) and you're good to
+          go.
+        </p>
         <label for="html-usage">In the HTML document's &lt;head>:</label>
         <pre><code id="html-usage">&lt;!-- Any polyfill to enable smoothscroll for the JavaScript APIs -->
 &lt;script src="https://unpkg.com/smoothscroll-polyfill/dist/smoothscroll.min.js">&lt;/script>
@@ -197,12 +255,14 @@
 &lt;!-- This package, to apply the smoothscroll to anchor links -->
 &lt;script src="https://unpkg.com/smoothscroll-anchor-polyfill">&lt;/script>
 </code></pre>
-        <h4 id="install-npm"><span>Option 2: With npm</span></h3>
-          <p style="overflow:auto;">Alternatively, if you're using npm, you can
-            install using <code>npm install smoothscroll-anchor-polyfill</code>
-            and then use the polyfill by requiring/importing it in your JS.</p>
-          <label for="js-usage">In your JavaScript:</label>
-          <pre><code>// Import any polyfill to enable smoothscroll for JS APIs
+        <h4 id="install-npm"><span>Option 2: With npm</span></h4>
+        <p style="overflow: auto;">
+          Alternatively, if you're using npm, you can install using
+          <code>npm install smoothscroll-anchor-polyfill</code> and then use the polyfill by
+          requiring/importing it in your JS.
+        </p>
+        <label for="js-usage">In your JavaScript:</label>
+        <pre><code>// Import any polyfill to enable smoothscroll for JS APIs
 import smoothscrollPolyfill from 'smoothscroll-polyfill';
 
 // Import this package to apply the smoothscroll to anchor links
@@ -211,20 +271,21 @@ import smoothscrollAnchorPolyfill from 'smoothscroll-anchor-polyfill';
 // (Unlike this package, smoothscroll-polyfill needs to be actively invoked: )
 smoothscrollPolyfill.polyfill();
 </code></pre>
-          <p>👉🏻 The polyfill is also provided in ES module format as
-            <code>index.mjs</code>
-            and <code>index.min.mjs</code>.</p>
-          <h3 id="code-splitting"><span>Advanced installation (with Code
-              Splitting)</span></h3>
-          <p>If you're using a build system with support for code splitting
-            like
-            <a href="https://parceljs.org/">Parcel</a> or <a
-              href="https://webpack.js.org/">Webpack</a>,
-            you can use dynamic imports to load the polyfills – this way,
-            browsers won't even download the polyfill code if they already have
-            support for the Scroll Behavior spec natively:</p>
-          <label for="js-usage">In your JavaScript code:</label>
-          <pre><code id="js-usage-advanced">// Only continue if polyfills are actually needed
+        <p>
+          👉🏻 The polyfill is also provided in ES module format as
+          <code>index.mjs</code>
+          and <code>index.min.mjs</code>.
+        </p>
+        <h3 id="code-splitting"><span>Advanced installation (with Code Splitting)</span></h3>
+        <p>
+          If you're using a build system with support for code splitting like
+          <a href="https://parceljs.org/">Parcel</a> or
+          <a href="https://webpack.js.org/">Webpack</a>, you can use dynamic imports to load the
+          polyfills – this way, browsers won't even download the polyfill code if they already have
+          support for the Scroll Behavior spec natively:
+        </p>
+        <label for="js-usage">In your JavaScript code:</label>
+        <pre><code id="js-usage-advanced">// Only continue if polyfills are actually needed
 if (!('scrollBehavior' in document.documentElement.style)) {
 
   // Wait until the Polyfills are loaded
@@ -243,248 +304,254 @@ if (!('scrollBehavior' in document.documentElement.style)) {
 
       <section>
         <h2 id="docs"><span>Docs</span></h2>
-        <p>For 90% of use cases, there should not be much more to it than
-          loading this polyfill – it will
-          execute immediately no matter if loaded through a script tag or in a
-          module environment. If the Scroll Behavior spec is supported
-          natively, the code won't do anything.</p>
-        <h3 id="changing-behavior"><span>Changing the scroll behavior</span>
-        </h3>
-        <p>The prefered way to dynamically adjust the scroll behavior is through CSS, e.g. toggling a class or using a media query. The documentation site is using this method: click
-          the <a href="#scroll-btn">"Toggle smooth scroll" button</a> and
-          notice how the class <code>smooth-scroll</code> is toggled on
-          <code>&lt;html></code>.</p>
-        <p>Valid property values for <code>scroll-behavior</code> are <code>smooth</code> to
-          enable smooth scroll, or <code>auto</code>, <code>initial</code>,
-          <code>inherit</code> or <code>unset</code> to use instant, jumping scroll.</p>
+        <p>
+          For 90% of use cases, there should not be much more to it than loading this polyfill – it
+          will execute immediately no matter if loaded through a script tag or in a module
+          environment. If the Scroll Behavior spec is supported natively, the code won't do
+          anything.
+        </p>
+        <h3 id="changing-behavior"><span>Changing the scroll behavior</span></h3>
+        <p>
+          The prefered way to dynamically adjust the scroll behavior is through CSS, e.g. toggling a
+          class or using a media query. The documentation site is using this method: click the
+          <a href="#scroll-btn">"Toggle smooth scroll" button</a> and notice how the class
+          <code>smooth-scroll</code> is toggled on <code>&lt;html></code>.
+        </p>
+        <p>
+          Valid property values for <code>scroll-behavior</code> are <code>smooth</code> to enable
+          smooth scroll, or <code>auto</code>, <code>initial</code>, <code>inherit</code> or
+          <code>unset</code> to use instant, jumping scroll.
+        </p>
         <div>
-          <p>You can also assign these values directly to <span
-              class="allow-overflow"><code>document.documentElement.style.scrollBehavior</code></span>,
-            it will have precedence over all other ways of specyfing the scroll behavior.<br>
-            Assigning to <code>.scrollBehavior</code> is <b>not recommened</b>
-            however, as some packages use this property for feature detection and can break if you mess with it.</p>
-        </div>
-        <h3 id="force-flag"><span>Using the polyfill even if there is native
-            support</span></h3>
-          <p>This package exports two methods, <code>destroy</code> and
-            <code>polyfill</code>.<br>
-            If loaded through a script tag, these methods are exposed on
-            <span class="allow-overflow"><code>window.smoothscrollAnchorPolyfill</code></span>.
+          <p>
+            You can also assign these values directly to
+            <span class="allow-overflow"
+              ><code>document.documentElement.style.scrollBehavior</code></span
+            >, it will have precedence over all other ways of specyfing the scroll behavior.<br />
+            Assigning to <code>.scrollBehavior</code> is <b>not recommened</b> however, as some
+            packages use this property for feature detection and can break if you mess with it.
           </p>
+        </div>
+        <h3 id="force-flag"><span>Using the polyfill even if there is native support</span></h3>
+        <p>
+          This package exports two methods, <code>destroy</code> and <code>polyfill</code>.<br />
+          If loaded through a script tag, these methods are exposed on
+          <span class="allow-overflow"><code>window.smoothscrollAnchorPolyfill</code></span
+          >.
+        </p>
         <div class="row row-wrap">
-          <div class="column column-33" style="flex-grow:1;max-width:100%;overflow:auto;">
+          <div class="column column-33" style="flex-grow: 1; max-width: 100%; overflow: auto;">
             <code>polyfill({ force: boolean })</code>:
           </div>
-          <div class="column column-66" style="flex-grow:1;max-width:100%;">
-            <p>The <code>polyfill</code> method starts the polyfill. If it is already active, it will simply restart – so you can safely call it without running <code>destroy()</code> first.<br>
-              The method takes an (optional) Object as argument, if you set the property <code>force</code> to true, anchor navigation will be handled by this script even if the browser supports native smooth scroll. <b>Not recommended.</b></p>
+          <div class="column column-66" style="flex-grow: 1; max-width: 100%;">
+            <p>
+              The <code>polyfill</code> method starts the polyfill. If it is already active, it will
+              simply restart – so you can safely call it without running
+              <code>destroy()</code> first.<br />
+              The method takes an (optional) Object as argument, if you set the property
+              <code>force</code> to true, anchor navigation will be handled by this script even if
+              the browser supports native smooth scroll. <b>Not recommended.</b>
+            </p>
           </div>
         </div>
         <div class="row row-wrap">
-          <div class="column column-33" style="flex-grow:1;max-width:100%;">
+          <div class="column column-33" style="flex-grow: 1; max-width: 100%;">
             <code>destroy()</code>:
           </div>
-          <div class="column column-66" style="flex-grow:1;max-width:100%;">
+          <div class="column column-66" style="flex-grow: 1; max-width: 100%;">
             <p>Disables the polyfill and removes all EventListeners.</p>
           </div>
         </div>
-<br><br>
+        <br /><br />
         <h3 id="limitations"><span>Limitations</span></h3>
-        <h4 id="no-regular-stylesheets"><span><code>scroll-behavior</code> is
-            not detected in regular stylesheets</span></h4>
-        <p>As already explained in the <a href="#usage">Usage</a> section,
+        <h4 id="no-regular-stylesheets">
+          <span><code>scroll-behavior</code> is not detected in regular stylesheets</span>
+        </h4>
+        <p>
+          As already explained in the <a href="#usage">Usage</a> section,
           <code>scroll-behavior</code>
-          can not be set in regular CSS, as accessing the property there
-          from JavaScript is not possible without a performance hit. This
-          is caused by browsers not parsing a CSS property if it isn't
-          recognized as valid. If you need the flexiblity of CSS, consider
-          the <a href="#font-family"><code>font-family</code>
-            workaround</a>.</p>
-        <h4 id="global-only"><span><code>scroll-behavior</code> is only
-            supported as global setting</span></h4>
-        <p>In browsers with native support, you can define
+          can not be set in regular CSS, as accessing the property there from JavaScript is not
+          possible without a performance hit. This is caused by browsers not parsing a CSS property
+          if it isn't recognized as valid. If you need the flexiblity of CSS, consider the
+          <a href="#font-family"><code>font-family</code> workaround</a>.
+        </p>
+        <h4 id="global-only">
+          <span><code>scroll-behavior</code> is only supported as global setting</span>
+        </h4>
+        <p>
+          In browsers with native support, you can define
           <code>scroll-behavior</code>
-          at multiple points in your document, e.g. <code>auto</code> on
-          the document itself, but <code>smooth</code> on a slideshow
-          container that has separate scrolling. This polyfill does not
-          allow for that, either all anchors on the page scroll smoothly by
-          setting <code>scroll-behavior</code>
-          at document level, or none.</p>
-        <h4 id="no-javascript-scroll"><span><code>scroll-behavior</code>
-            doesn't affect scrolling triggered from JavaScript</span></h4>
-        <p>This polyfill only affects scrolling triggered by clicks on
+          at multiple points in your document, e.g. <code>auto</code> on the document itself, but
+          <code>smooth</code> on a slideshow container that has separate scrolling. This polyfill
+          does not allow for that, either all anchors on the page scroll smoothly by setting
+          <code>scroll-behavior</code> at document level, or none.
+        </p>
+        <h4 id="no-javascript-scroll">
+          <span
+            ><code>scroll-behavior</code> doesn't affect scrolling triggered from JavaScript</span
+          >
+        </h4>
+        <p>
+          This polyfill only affects scrolling triggered by clicks on
           <code>&lt;a></code>
-          tags and through <code>hashchange</code> events. You'll still have to
-          pass <code>{ behavior: 'smooth' }</code> when using APIs like
+          tags and through <code>hashchange</code> events. You'll still have to pass
+          <code>{ behavior: 'smooth' }</code> when using APIs like
           <code>window.scroll()</code>
           unless your polyfill for these APIs has it's own CSS property check.
         </p>
-        <h4 id="native-inconsistencies"><span>Inconsistencies in native
-            implementations</span></h4>
-        <p>While Scroll Behavior has native support in a couple of browsers
-          already, they behave differently than expected in some situations.
-          The following are not bugs of this polyfill, but inconsistencies of
-          browsers' native behavior and workarounds you might want to know
-          about.</p>
-        <p><b>Blink (e.g. Chrome, Opera):</b><br>
-          While 'normal' scrolling is smooth, if you click a couple of links
-          and then navigate back and forth using the browser's
-          forwards/backwards buttons (which triggers a <code>hashchange</code>
-          everytime), it jumps from anchor to anchor instead of scrolling
-          smoothly.<br>If this is important to you, you can fix it by detecting
-          the Blink engine and force-enabling this polyfill. Load <a
-            href="https://github.com/isocroft/browsengine">browsengine.js</a>,
-          then do (<i>before</i> the polyfill runs):</p>
+        <h4 id="native-inconsistencies"><span>Inconsistencies in native implementations</span></h4>
+        <p>
+          While Scroll Behavior has native support in a couple of browsers already, they behave
+          differently than expected in some situations. The following are not bugs of this polyfill,
+          but inconsistencies of browsers' native behavior and workarounds you might want to know
+          about.
+        </p>
+        <p>
+          <b>Blink (e.g. Chrome, Opera):</b><br />
+          While 'normal' scrolling is smooth, if you click a couple of links and then navigate back
+          and forth using the browser's forwards/backwards buttons (which triggers a
+          <code>hashchange</code> everytime), it jumps from anchor to anchor instead of scrolling
+          smoothly.<br />If this is important to you, you can fix it by detecting the Blink engine
+          and force-enabling this polyfill. Load
+          <a href="https://github.com/isocroft/browsengine">browsengine.js</a>, then do (<i
+            >before</i
+          >
+          the polyfill runs):
+        </p>
         <pre><code>if (window.webpage.engine.blink) {
           window.__forceSmoothscrollAnchorPolyfill__ = true;
 }</code></pre>
-        <p><b>Gecko (Firefox):</b><br>
-          <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=279629#c27">Anchors
-            pointing to <code>#top</code> don't smooth scroll.</a> Use
-          anchors pointing at <code>#</code> for an easy fix.</p>
-          <br><br>
+        <p>
+          <b>Gecko (Firefox):</b><br />
+          <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=279629#c27"
+            >Anchors pointing to <code>#top</code> don't smooth scroll.</a
+          >
+          Use anchors pointing at <code>#</code> for an easy fix.
+        </p>
+        <br /><br />
         <h3 id="faq"><span>FAQ</span></h3>
         <h4 id="ssr"><span>Will this break Server Side Rendering?</span></h4>
         <p>No.</p>
-        <h4 id="event-delegation"><span>Will this work if anchors are inserted
-            after the script was loaded?</span></h4>
-        <p>The polyfill uses <a href="https://javascript.info/event-delegation">Event
-            Delegation</a> to detect clicks,
-          so even if an anchor is added to the page after the polyfill was
-          loaded, everything should work.</p>
-        <h4 id="reduced-motion"><span>Does this support
-            <code>prefers-reduced-motion</code>?</span></h4>
-        <p><code>prefers-reduced-motion</code> is a relatively new CSS media
-          query that hints at whether a client prefers less motion, which can
-          be important for people with certain illnesses. Firefox currently is
-          the only browser to support both <code>scroll-behavior</code> and
-          <code>prefers-reduced-motion</code> and thus acts as a reference for
-          the interplay between these two properties – and in Firefox, smooth
-          scrolling is <b>not</b> disabled automatically if this media query
-          matches.<br>
-          So no, this polyfill does not automatically disable itself if the
-          client prefers less motion, but yes, it supports
+        <h4 id="event-delegation">
+          <span>Will this work if anchors are inserted after the script was loaded?</span>
+        </h4>
+        <p>
+          The polyfill uses
+          <a href="https://javascript.info/event-delegation">Event Delegation</a> to detect clicks,
+          so even if an anchor is added to the page after the polyfill was loaded, everything should
+          work.
+        </p>
+        <h4 id="reduced-motion">
+          <span>Does this support <code>prefers-reduced-motion</code>?</span>
+        </h4>
+        <p>
+          <code>prefers-reduced-motion</code> is a relatively new CSS media query that hints at
+          whether a client prefers less motion, which can be important for people with certain
+          illnesses. Firefox currently is the only browser to support both
+          <code>scroll-behavior</code> and <code>prefers-reduced-motion</code> and thus acts as a
+          reference for the interplay between these two properties – and in Firefox, smooth
+          scrolling is <b>not</b> disabled automatically if this media query matches.<br />
+          So no, this polyfill does not automatically disable itself if the client prefers less
+          motion, but yes, it supports
           <code>prefers-reduced-motion</code>
           the same way Firefox does – via a media query:
-          <pre><code>@media (prefers-reduced-motion: reduce) {
+        </p>
+        <pre><code>@media (prefers-reduced-motion: reduce) {
   html {
     --scroll-behavior: auto;
     scroll-behavior: auto;
   }
 }</code></pre>
-        </p>
       </section>
       <!--  -->
       <!-- Way too big legal section  -->
       <section>
-        <label class="label-inline" for="language"
-          id="legal">Show in German? (<b>Deutsch</b>)</label>
-        <input type="checkbox" name="language" id="language">
+        <label class="label-inline" for="language" id="legal"
+          >Show in German? (<b>Deutsch</b>)</label
+        >
+        <input type="checkbox" name="language" id="language" />
         <div class="german">
           <h2><span>Rechtliches</span></h2>
-          <p><strong>Hinweis: die folgenden rechtlichen Hinweise betreffen
-              diese Website als solche entsprechend deutschem und europäischem
-              Recht, nicht das vorgestellte Software-Paket
+          <p>
+            <strong
+              >Hinweis: die folgenden rechtlichen Hinweise betreffen diese Website als solche
+              entsprechend deutschem und europäischem Recht, nicht das vorgestellte Software-Paket
               <em>"smoothscroll-anchor-polyfill"</em>.
               <em>"smoothscroll-anchor-polyfill"</em>
-              selbst ist lizensiert nach der MIT-Lizenz, mehr Informationen
-              können dem <a href="https://github.com/jonaskuske/smoothscroll-anchor-polyfill">GitHub
-                Repository</a> entnommen werden.</strong></p>
+              selbst ist lizensiert nach der MIT-Lizenz, mehr Informationen können dem
+              <a href="https://github.com/jonaskuske/smoothscroll-anchor-polyfill"
+                >GitHub Repository</a
+              >
+              entnommen werden.</strong
+            >
+          </p>
           <h3>Impressum</h3>
           <p><b>Angaben gemäß §5 TMG</b></p>
           <address>
-            Jonas Kuske<br>
-            Sielstraße 5<br>
+            Jonas Kuske<br />
+            Sielstraße 5<br />
             27568 Bremerhaven
           </address>
-          <br>
+          <br />
           <p><b>Kontakt</b></p>
           <p>
-            Telefon: +491603336948<br>
-            Mail: mail@jonaskuske.com<br>
+            Telefon: +491603336948<br />
+            Mail: mail@jonaskuske.com<br />
           </p>
 
           <p><b>Verantwortlich für Inhalte gemäß 55 Abs. 2 RStV:</b></p>
-          <p>Jonas Kuske<br>Sielstraße 5<br>27568 Bremerhaven</p>
+          <p>Jonas Kuske<br />Sielstraße 5<br />27568 Bremerhaven</p>
 
           <h4>Haftungsauschluss</h4>
           <p><b>Haftung für Inhalte</b></p>
-          <p>Die Inhalte dieser Seite wurden mit größter Sorgfalt erstellt.
-            Für die
-            Richtigkeit, Vollständigkeit und Aktualität der Inhalte kann ich
-            jedoch keine
-            Gewähr übernehmen. Als Diensteanbieter bin ich gemäß § 7 Abs.1
-            TMG für eigene
-            Inhalte auf diesen Seiten nach den allgemeinen Gesetzen
-            verantwortlich. Nach §§
-            8 bis 10 TMG bin ich als Diensteanbieter jedoch nicht
-            verpflichtet,
-            übermittelte oder gespeicherte fremde Informationen zu überwachen
-            oder nach
-            Umständen zu forschen, die auf eine rechtswidrige Tätigkeit
-            hinweisen.
-            Verpflichtungen zur Entfernung oder Sperrung der Nutzung von
-            Informationen nach
-            den allgemeinen Gesetzen bleiben hiervon unberührt. Eine
-            diesbezügliche Haftung
-            ist jedoch erst ab dem Zeitpunkt der Kenntnis einer konkreten
-            Rechtsverletzung
-            möglich. Bei Bekanntwerden von entsprechenden Rechtsverletzungen
-            werde ich
-            diese Inhalte umgehend entfernen.</p>
+          <p>
+            Die Inhalte dieser Seite wurden mit größter Sorgfalt erstellt. Für die Richtigkeit,
+            Vollständigkeit und Aktualität der Inhalte kann ich jedoch keine Gewähr übernehmen. Als
+            Diensteanbieter bin ich gemäß § 7 Abs.1 TMG für eigene Inhalte auf diesen Seiten nach
+            den allgemeinen Gesetzen verantwortlich. Nach §§ 8 bis 10 TMG bin ich als
+            Diensteanbieter jedoch nicht verpflichtet, übermittelte oder gespeicherte fremde
+            Informationen zu überwachen oder nach Umständen zu forschen, die auf eine rechtswidrige
+            Tätigkeit hinweisen. Verpflichtungen zur Entfernung oder Sperrung der Nutzung von
+            Informationen nach den allgemeinen Gesetzen bleiben hiervon unberührt. Eine
+            diesbezügliche Haftung ist jedoch erst ab dem Zeitpunkt der Kenntnis einer konkreten
+            Rechtsverletzung möglich. Bei Bekanntwerden von entsprechenden Rechtsverletzungen werde
+            ich diese Inhalte umgehend entfernen.
+          </p>
 
           <p><b>Haftung für Links</b></p>
-          <p>Mein Angebot enthält Links zu externen Webseiten Dritter, auf
-            deren Inhalte ich
-            keinen Einfluss habe. Deshalb kann ich für diese fremden Inhalte
-            auch keine
-            Gewähr übernehmen. Für die Inhalte der verlinkten Seiten ist
-            stets der
-            jeweilige Anbieter oder Betreiber der Seiten verantwortlich. Die
-            verlinkten
-            Seiten wurden zum Zeitpunkt der Verlinkung auf mögliche
-            Rechtsverstöße
-            überprüft. Rechtswidrige Inhalte waren zum Zeitpunkt der
-            Verlinkung nicht
-            erkennbar. Eine permanente inhaltliche Kontrolle der verlinkten
-            Seiten ist
-            jedoch ohne konkrete Anhaltspunkte einer Rechtsverletzung nicht
-            zumutbar. Bei
-            Bekanntwerden von Rechtsverletzungen werde ich derartige Links
-            umgehend
-            entfernen.</p>
+          <p>
+            Mein Angebot enthält Links zu externen Webseiten Dritter, auf deren Inhalte ich keinen
+            Einfluss habe. Deshalb kann ich für diese fremden Inhalte auch keine Gewähr übernehmen.
+            Für die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter oder Betreiber
+            der Seiten verantwortlich. Die verlinkten Seiten wurden zum Zeitpunkt der Verlinkung auf
+            mögliche Rechtsverstöße überprüft. Rechtswidrige Inhalte waren zum Zeitpunkt der
+            Verlinkung nicht erkennbar. Eine permanente inhaltliche Kontrolle der verlinkten Seiten
+            ist jedoch ohne konkrete Anhaltspunkte einer Rechtsverletzung nicht zumutbar. Bei
+            Bekanntwerden von Rechtsverletzungen werde ich derartige Links umgehend entfernen.
+          </p>
 
           <h4>Urheberrecht</h4>
-          <p>Die durch die Seitenbetreiber erstellten bzw. verwendeten
-            Inhalte
-            und Werke auf
-            diesen Seiten unterliegen dem deutschen Urheberrecht.</p>
-          <p>Soweit die Inhalte auf dieser
-            Seite nicht vom
-            Betreiber erstellt wurden, werden die Urheberrechte Dritter
-            beachtet.
-            Insbesondere werden Inhalte Dritter als solche gekennzeichnet.
-            Sollten Sie
-            trotzdem auf eine Urheberrechtsverletzung aufmerksam werden,
-            bitte
-            ich um einen
-            entsprechenden Hinweis. Bei Bekanntwerden von Rechtsverletzungen
-            werde ich
-            derartige Inhalte umgehend entfernen.
+          <p>
+            Die durch die Seitenbetreiber erstellten bzw. verwendeten Inhalte und Werke auf diesen
+            Seiten unterliegen dem deutschen Urheberrecht.
+          </p>
+          <p>
+            Soweit die Inhalte auf dieser Seite nicht vom Betreiber erstellt wurden, werden die
+            Urheberrechte Dritter beachtet. Insbesondere werden Inhalte Dritter als solche
+            gekennzeichnet. Sollten Sie trotzdem auf eine Urheberrechtsverletzung aufmerksam werden,
+            bitte ich um einen entsprechenden Hinweis. Bei Bekanntwerden von Rechtsverletzungen
+            werde ich derartige Inhalte umgehend entfernen.
           </p>
           <h3>Datenschutz</h3>
-          <p>Durch die Nutzung dieser Website erklären Sie sich mit
-            der Erhebung, Verarbeitung und Nutzung von Daten gemäß der
-            nachfolgenden
-            Beschreibung einverstanden. Die Website kann grundsätzlich ohne
-            Registrierung
-            besucht werden. Dabei werden folgende Daten ggf. zu statistischen
-            Zwecken auf
-            dem Server, verwaltet von <a href="https://github.com" target="_blank"
-              rel="noopener">GitHub</a>,
-            in sogenannten "Server Log-Files" gespeichert, ohne dass diese
-            Daten
-            unmittelbar auf Ihre Person bezogen werden:</p>
+          <p>
+            Durch die Nutzung dieser Website erklären Sie sich mit der Erhebung, Verarbeitung und
+            Nutzung von Daten gemäß der nachfolgenden Beschreibung einverstanden. Die Website kann
+            grundsätzlich ohne Registrierung besucht werden. Dabei werden folgende Daten ggf. zu
+            statistischen Zwecken auf dem Server, verwaltet von
+            <a href="https://github.com" target="_blank" rel="noopener">GitHub</a>, in sogenannten
+            "Server Log-Files" gespeichert, ohne dass diese Daten unmittelbar auf Ihre Person
+            bezogen werden:
+          </p>
           <ul>
             <li>Besuchte Website</li>
             <li>Uhrzeit zum Zeitpunkt des Zugriffes</li>
@@ -494,84 +561,84 @@ if (!('scrollBehavior' in document.documentElement.style)) {
             <li>Verwendetes Betriebssystem</li>
             <li>Verwendete IP-Adresse</li>
           </ul>
-          <p>Diese Seite verwendet den Dienst <a href="https://fonts.google.com" target="_blank"
-              rel="noopener">Google Fonts</a>, um verschiedene
-            Schriftarten einzubinden. Beim Abrufen der Schriftdateien, was bei
-            Seitenaufruf automatisch geschieht, können die Daten, die oben
-            aufgelistet
-            sind, auch vom Dienstleister Google eingesehen werden.</p>
-          <p>Nehmen Sie mit dem Websitebetreiber durch die
-            angebotenen Kontaktmöglichkeiten Verbindung auf, werden Ihre
-            Angaben
-            gespeichert, damit auf diese zur Bearbeitung und Beantwortung Ihrer
-            Anfrage
-            zurückgegriffen werden kann. Ohne Ihre Einwilligung werden diese
-            Daten nicht
-            an Dritte weitergegeben; auf Wunsch können Sie Einsicht in die
-            gesammelten
-            Daten bekommen oder eine vollständige Löschung selbiger
-            veranlassen.</p>
+          <p>
+            Diese Seite verwendet den Dienst
+            <a href="https://fonts.google.com" target="_blank" rel="noopener">Google Fonts</a>, um
+            verschiedene Schriftarten einzubinden. Beim Abrufen der Schriftdateien, was bei
+            Seitenaufruf automatisch geschieht, können die Daten, die oben aufgelistet sind, auch
+            vom Dienstleister Google eingesehen werden.
+          </p>
+          <p>
+            Nehmen Sie mit dem Websitebetreiber durch die angebotenen Kontaktmöglichkeiten
+            Verbindung auf, werden Ihre Angaben gespeichert, damit auf diese zur Bearbeitung und
+            Beantwortung Ihrer Anfrage zurückgegriffen werden kann. Ohne Ihre Einwilligung werden
+            diese Daten nicht an Dritte weitergegeben; auf Wunsch können Sie Einsicht in die
+            gesammelten Daten bekommen oder eine vollständige Löschung selbiger veranlassen.
+          </p>
         </div>
         <div class="english">
           <h2><span>Legal</span></h2>
-          <p><strong>Note: the legalities discussed here concern this website
-              itself, not the software package
-              <em>"smoothscroll-anchor-polyfill"</em>,
-              and are required for compliance with German & European law.
+          <p>
+            <strong
+              >Note: the legalities discussed here concern this website itself, not the software
+              package <em>"smoothscroll-anchor-polyfill"</em>, and are required for compliance with
+              German & European law.
               <em>"smoothscroll-anchor-polyfill"</em>
-              itself is licensed under a plain MIT license, for more
-              information
-              check out the respective <a
-                href="https://github.com/jonaskuske/smoothscroll-anchor-polyfill">GitHub
-                repository</a>.</strong></p>
+              itself is licensed under a plain MIT license, for more information check out the
+              respective
+              <a href="https://github.com/jonaskuske/smoothscroll-anchor-polyfill"
+                >GitHub repository</a
+              >.</strong
+            >
+          </p>
           <h3>Imprint</h3>
           <p><b>Information in accordance with section §5 TMG</b></p>
           <address>
-            Jonas Kuske<br>
-            Sielstraße 5<br>
+            Jonas Kuske<br />
+            Sielstraße 5<br />
             27568 Bremerhaven
           </address>
-          <br>
+          <br />
           <p><b>Contact</b></p>
           <p>
-            Phone: +491603336948<br>
-            Mail: mail@jonaskuske.com<br>
+            Phone: +491603336948<br />
+            Mail: mail@jonaskuske.com<br />
           </p>
 
-          <p><b>Person responsible for content in accordance with 55 Abs. 2
-              RStV:</b></p>
-          <p>Jonas Kuske<br>Sielstraße 5<br>27568 Bremerhaven</p>
+          <p><b>Person responsible for content in accordance with 55 Abs. 2 RStV:</b></p>
+          <p>Jonas Kuske<br />Sielstraße 5<br />27568 Bremerhaven</p>
 
           <h4>Disclaimer</h4>
           <p><b>Accountability for content</b></p>
-          <p>The contents of our pages have been created with the utmost care.
-            However, we cannot guarantee the contents' accuracy, completeness
-            or topicality. According to statutory provisions, we are
-            furthermore responsible for our own content on these web pages.In
-            this context, please note that we are accordingly not obliged to
-            monitor merely the transmitted or saved information of third
-            parties, or investigate circumstances pointing to illegal activity.
-            Our obligations to remove or block the use of information under
-            generally applicable laws remain unaffected by this as per §§ 8 to
-            10 of the Telemedia Act(TMG).</p>
+          <p>
+            The contents of our pages have been created with the utmost care. However, we cannot
+            guarantee the contents' accuracy, completeness or topicality. According to statutory
+            provisions, we are furthermore responsible for our own content on these web pages.In
+            this context, please note that we are accordingly not obliged to monitor merely the
+            transmitted or saved information of third parties, or investigate circumstances pointing
+            to illegal activity. Our obligations to remove or block the use of information under
+            generally applicable laws remain unaffected by this as per §§ 8 to 10 of the Telemedia
+            Act(TMG).
+          </p>
 
           <p><b>Accountability for links</b></p>
-          <p>Responsibility for the content of external links (to web pages of third parties) lies
+          <p>
+            Responsibility for the content of external links (to web pages of third parties) lies
             solely with the operators of the linked pages. No violations were evident to us at the
             time of linking. Should any legal infringement become known to us, we will remove the
             respective link immediately.
           </p>
 
           <h4>Copyright</h4>
-          <p>Our web pages and their contents are subject to German copyright
-            law.</p>
+          <p>Our web pages and their contents are subject to German copyright law.</p>
           <h3>Privacy</h3>
-          <p>With the use of this website you agree to the collection and
-            processing of data as described below.
-            The website can be visited with out prior sign-up, when visiting
-            the site the following data might be stored on the server (managed
-            by <a href="https://github.com" target="_blank" rel="noopener">GitHub</a>)
-            in the form of so-called "server log files" for statistical use.</p>
+          <p>
+            With the use of this website you agree to the collection and processing of data as
+            described below. The website can be visited with out prior sign-up, when visiting the
+            site the following data might be stored on the server (managed by
+            <a href="https://github.com" target="_blank" rel="noopener">GitHub</a>) in the form of
+            so-called "server log files" for statistical use.
+          </p>
           <ul>
             <li>Visited website</li>
             <li>Time when website was loaded</li>
@@ -581,33 +648,51 @@ if (!('scrollBehavior' in document.documentElement.style)) {
             <li>Used operating system</li>
             <li>Used IP address</li>
           </ul>
-          <p>This website is using service <a href="https://fonts.google.com" target="_blank"
-              rel="noopener">Google Fonts</a> to load font
-            files. While loading the font files – which happens automatically
-            when visiting this site – the pieces of data listed above might
-            be gathered and stored by service provider Google as well.</p>
-          <p>If you contact the operator of this website through the given
-            contact possibilities your given information will be stored solely
-            to reply to and process your inquiry. Without your permission
-            collected information will never be shared with third parties. At
-            your request you can gain insight into or request the complete
-            deletion of all data collected about you.</p>
+          <p>
+            This website is using service
+            <a href="https://fonts.google.com" target="_blank" rel="noopener">Google Fonts</a> to
+            load font files. While loading the font files – which happens automatically when
+            visiting this site – the pieces of data listed above might be gathered and stored by
+            service provider Google as well.
+          </p>
+          <p>
+            If you contact the operator of this website through the given contact possibilities your
+            given information will be stored solely to reply to and process your inquiry. Without
+            your permission collected information will never be shared with third parties. At your
+            request you can gain insight into or request the complete deletion of all data collected
+            about you.
+          </p>
         </div>
       </section>
     </main>
 
     <footer class="container">
       <div class="row row-center row-no-padding">
-        <p>© 2019, Jonas Kuske</p>
+        <p>© 2021, Jonas Kuske</p>
       </div>
     </footer>
 
     <script>
       // Update URL when clicking on title without triggering navigation
-      Array.prototype.slice.call(document.querySelectorAll('h1[id],h2[id],h3[id],h4[id]')).forEach(function(a) { a.addEventListener('click', function() { var b = a.id; if (null !== b && b !== void 0) { var c = location.href; 0 < c.indexOf('#') ? c = c.replace(/#.*$/, '#' + b) : c += '#' + b, history.replaceState(null, document.title, c) } }) });
+      Array.prototype.slice
+        .call(document.querySelectorAll('h1[id],h2[id],h3[id],h4[id]'))
+        .forEach(function (a) {
+          a.addEventListener('click', function () {
+            var b = a.id
+            if (null !== b && b !== void 0) {
+              var c = location.href
+              0 < c.indexOf('#') ? (c = c.replace(/#.*$/, '#' + b)) : (c += '#' + b),
+                history.replaceState(null, document.title, c)
+            }
+          })
+        })
       // Flexbox feature detect & Button for toggling smoothscroll
-      !(function(d) { ('alignItems' in d.documentElement.style) && (d.documentElement.className += " flex-center"); d.querySelector('#scroll-btn button').addEventListener('click', function() { d.documentElement.classList.toggle('smooth-scroll') }) })(document)
+      !(function (d) {
+        'alignItems' in d.documentElement.style && (d.documentElement.className += ' flex-center')
+        d.querySelector('#scroll-btn button').addEventListener('click', function () {
+          d.documentElement.classList.toggle('smooth-scroll')
+        })
+      })(document)
     </script>
   </body>
-
 </html>

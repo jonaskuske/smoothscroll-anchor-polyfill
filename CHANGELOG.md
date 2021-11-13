@@ -5,13 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.3] - TBA
+
+### Changed
+
+- Build setup now uses `rollup` for more robust artifacts (decreases file sizes for `.mjs` files but increases them for `.js` files)
+- Upgraded all dependencies
+- Updated year in copyright notices
+- Added `package#packageManager` field to support corepack
+
+### Fixed
+
+- Prevent global scope pollution in UMD builds (previous babel/terser setup created global variables `e` and `t`)
+
 ## [1.3.2] - 2020-04-12
 
 ### Fixed
 
 - The scroll navigation is now prevented if you call `event.preventDefault()` on the click event (fix #32)
 - Polyfill now skips handling click events if the href has a query string that is different from the current one (fix #28)  
-Previously, a navigation from `/?page=1` to `/?page=2#content` would not work: because the path is the same, the polyfill would intercept the navigation even though the different query params meant that the target was an entirely different page/website  
+  Previously, a navigation from `/?page=1` to `/?page=2#content` would not work: because the path is the same, the polyfill would intercept the navigation even though the different query params meant that the target was an entirely different page/website
 
 ## [1.3.0] - 2019-06-12
 

@@ -7,7 +7,7 @@
   "module": "dist/index.mjs",
   "files": [
     "dist/*",
-    "index.js",
+    "src/*",
     "!dist/.gitkeep"
   ],
   "packageManager": "yarn@3.1.0",
@@ -20,7 +20,7 @@
   "scripts": {
     "test": "jest --verbose",
     "build": "rollup --config",
-    "prepublishOnly": "npm run build"
+    "prepack": "yarn build"
   },
   "repository": {
     "type": "git",

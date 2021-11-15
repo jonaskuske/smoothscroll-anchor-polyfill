@@ -79,7 +79,7 @@ function handleClick(evt) {
     triggerSmoothscroll(target)
 
     // Append the hash to the URL
-    if (history.pushState) history.pushState(null, d.title, anchor.hash || '#')
+    if (history.pushState) history.pushState(null, d.title, anchor.href)
   }
 }
 
